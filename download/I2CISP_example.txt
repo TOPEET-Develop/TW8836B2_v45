@@ -1,0 +1,124 @@
+;------------------
+; I2CSPI sample
+; spiaddr = 0x60000
+; XDATA addr = 0
+; DATA:	32Bytes
+;   01 23 45 67 89 AB CD EF 30 31 32 33 35 35 36 37
+;   40 41 42 43 44 45 46 47 48 49 4A 4B 4C 4D 4E 4F
+;------------------
+;--MCU halt
+w ff 4
+w ed 55
+w ed aa
+w ec 00
+;
+;-- select Page4
+w ff 4
+;
+;--SPI write enable
+w ff 4
+w f3 c1
+w fa 06
+w f4 03
+; check REG4F4[0] is cleard
+delay=10
+r f4
+;
+;--sector erase
+; SectorErase: 0x20,  BlockErase:0xD8
+w f3 c4
+w fa 20
+w fb 06
+w fc 00
+w fd 00
+w f4 07
+delay=10
+r f4
+;
+;--dump command
+; spi d 60000
+;
+;
+;
+;--put data on Xmem
+w c2 01
+; check REG4C2[1] is set.
+delay=10
+r c2
+;
+;
+w bd 00
+w dc 00
+;
+w dd 01
+w dd 23
+w dd 45
+w dd 67
+w dd 89
+w dd AB
+w dd CD
+w dd EF
+w dc 30
+w dd 31
+w dd 32
+w dd 33
+w dd 34
+w dd 35
+w dd 36
+w dd 37
+;
+w dd 40
+w dd 41
+w dd 42
+w dd 43
+w dd 44
+w dd 45
+w dd 46
+w dd 47
+w dc 48
+w dd 49
+w dd 4A
+w dd 4B
+w dd 4C
+w dd 4D
+w dd 4E
+w dd 4F
+;
+;--done
+w c2 00
+; check REG4C2[1] is cleared.
+delay=10
+r c2
+;
+;--SPI write enable
+w f3 c1
+w fa 06
+w f4 03
+; check REG4F4[0] is cleard
+delay=10
+r f4
+;
+;==Write SPI from XMEM
+;
+
+;SPI address : 0x60000
+;
+;
+w FA 20  ;pageprogram command
+w FB 06	 ;spiaddr=0x60000
+w FC 00
+w FD 00
+w F6 00  ;BufferStart address : 0x0
+w F7 00
+w F5 00  ;BufferLength: 32bytes
+w F8 00
+w F9 20
+w f3 C4 ; [7:6]=11b:MCUMem,[5:4]=00b:IncreaseIndex,[3:0]=4:cmd+add
+w f4 07 ; [2]=1:write,,[0]=1:start
+; check REG4F4[0] is cleard
+delay=10
+r f4               
+;
+;to check, restart and, use "spi d 60000"
+;
+w ff 0

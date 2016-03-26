@@ -1,0 +1,23 @@
+echo off
+;TW8836B MCU_BUG
+;==mcu Halt==
+w ff 4
+w ed 55
+w ed aa
+w ec 00
+; delay
+DELAY = 5
+w ff 0
+b <TW> FC 77 00
+w ff 4
+b <TW> F2 77 80
+b <TW> E0 71 0A
+b <TW> DF 33 08
+b <TW> E1 54 20
+;==mcu ReRun==
+w ff 4
+w ed 55
+w ed aa
+w ec 01
+w ff 0
+echo on

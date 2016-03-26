@@ -1,0 +1,548 @@
+; Download FontRam. from 0x80000.
+echo off
+w ff 3
+b <TW> 0c 66 00 ; FOSD on
+
+w 00 00
+w 03 2C
+w 05 0E
+w 0B 00
+w 90 09
+w 91 1B
+w 93 20
+w 94 5F
+
+
+;;w ff 4 ;--McuSpiClkToPclk(PLLCLK_DIV_2P0)
+;;b <TW> e0 00 00
+;;w e1 22
+
+w ff 3
+b <TW> 00 11 02 ;FOsdFontSetFifo(OFF);
+b <TW> 04 00 01 ;FOsdSetAccessMode(FOSD_ACCESS_FONTRAM)
+
+; SpiFlashDmaRead(DMA_DEST_FONTRAM, dest_loc, src_loc, size);
+w ff 4
+b <TW> c0 20 05 ; QuadIO
+w c3 07 ; [7:6]:FontRAM,[5:4]:Increase,[3:0]:cmd len
+w c4 04 ; [2]:busy,[1]:Read
+w c6 00 ; dma dest
+w c7 00
+w da 00 ; dma len 0x0027F9
+w c8 27
+w c9 F9
+w ca EB ; cmd Read on QuadIO
+w cb 08 ; dma src addr. 0x400000->0x080000
+w cc 00
+w cd 00
+w ce 00
+;
+b <TW> c4 00 01 ; dma start
+DELAY=50
+;
+w ff 3
+b <TW> 00 11 00 ;FOsdFontSetFifo(ON);
+b <TW> 04 00 00 ;FOsdSetAccessMode(FOSD_ACCESS_OSDRAM)
+;
+;w ff 4 ;--McuSpiClkRestore(). I donot know previous.
+;w e1 01
+;b <TW> e0 00 01
+
+w ff 0
+echo on 
+;------------------------------
+;
+; download Font LUT
+;
+echo off
+
+;;w ff 4 ;--McuSpiClkToPclk(PLLCLK_DIV_2P0)
+;;b <TW> e0 00 00
+;;w e1 22
+
+w ff 3
+;FOsdSetPaletteColorArray(0,	FOsdHwDefPaletteBpp1,16, 0);
+;--skip
+;FOsdSetPaletteColorArray(FOSD_LUT_MAP_BPP2_START:36=0x24,(WORD *)font->palette_bpp2,4, 0);
+;code WORD default_LUT_bpp2[4] 		= { 0x0000,0x001F,0xF800,0xFFFF };
+w 0c 24
+w 0d 00
+w 0e 00
+w 0c 25
+w 0d 00
+w 0e 1F
+w 0c 26
+w 0d F8
+w 0e 00
+w 0c 27
+w 0d FF
+w 0e FF
+;FOsdSetPaletteColorArray(FOSD_LUT_MAP_BPP3_START:40=0x28,(WORD *)font->palette_bpp3,8, 0);
+;code WORD default_LUT_bpp3[8]= { 0x0000,0x001F,0x07E0,0x07FF,0xF800,0xF81F,0xFFE0,0xFFFF };
+w 0c 28
+w 0d 00
+w 0e 00
+w 0c 29
+w 0d 00
+w 0e 1F
+w 0c 2A
+w 0d 07
+w 0e E0
+w 0c 2B
+w 0d 07
+w 0e FF
+w 0c 2C
+w 0d F8
+w 0e 00
+w 0c 2D
+w 0d F8
+w 0e 1F
+w 0c 2E
+w 0d FF
+w 0e FE
+w 0c 2F
+w 0d FF
+w 0e FF
+;FOsdSetPaletteColorArray(FOSD_LUT_MAP_BPP4_START:48=0x30,(WORD *)font->palette_bpp4,16, 0);
+;code WORD default_LUT_bpp4[16] = { 0x0000,0x0010,0x0400,0x0410,0x8000,0x8010,0x8400,0x8410,
+;   0xC618,0x001F,0x07E0,0x07FF,0xF800,0xF81F,0xFFE0,0xFFFF	};
+w 0c 30
+w 0d 00
+w 0e 00
+w 0c 31
+w 0d 00
+w 0e 10
+w 0c 32
+w 0d 04
+w 0e 00
+w 0c 33
+w 0d 04
+w 0e 10
+w 0c 34
+w 0d 80
+w 0e 00
+w 0c 35
+w 0d 80
+w 0e 10
+w 0c 36
+w 0d 84
+w 0e 00
+w 0c 37
+w 0d 84
+w 0e 10
+w 0c 38
+w 0d C6
+w 0e 18
+w 0c 39
+w 0d 00
+w 0e 1F
+w 0c 3A
+w 0d 07
+w 0e E0
+w 0c 3B
+w 0d 07
+w 0e FF
+w 0c 3C
+w 0d F8
+w 0e 00
+w 0c 3D
+w 0d F8
+w 0e 1F
+w 0c 3E
+w 0d FF
+w 0e E0
+w 0c 3F
+w 0d FF
+w 0e FF
+
+;w ff 4 ;--McuSpiClkRestore(). I donot know previous.
+;w e1 01
+;b <TW> e0 00 01
+
+w ff 0
+echo on 
+;-----------------------------
+; DumpFont
+;
+echo off
+w ff 3 ;--clear OSD RAM
+b <TW> 04 11 02
+DELAY=50 
+
+w ff 3
+
+;
+;============
+;== win1
+;-----------
+w 10 C4
+w 11 00
+w 12 00
+w 13 00
+w 14 00
+w 15 10
+w 16 10
+w 17 00
+w 18 00
+w 19 00
+w 1A 00
+w 1B 00
+w 1C 00
+w 1D 00
+w 1E 00
+w 1F 00
+;FOsdWinInit(0);
+; FOsdWinAlphaPixel(winno,FOSD_COLOR_IDX_BLANK,0);
+;FOsdRamSetAddrAttr(start, 0x0F);
+; FOsdRamSetWriteMode(FOSD_OSDRAM_WRITE_NORMAL);
+b <TW> 04 32 00
+; FOsdRamSetAddress(OsdRamAddr); 
+b <TW> 05 00 0
+w 06 00
+; FOsdRamSetAttr(attr);																			
+w 08 0F
+; FOsdRamSetWriteMode(FOSD_OSDRAM_WRITE_DATA);
+b <TW> 04 32 0C
+; FOsdRamSetAddress(OsdRamAddr);	//NOTE: HW needs it.
+b <TW> 05 00 0
+w 06 00
+; FOsdRamSetData(addr);
+b 8c 04 55 00
+w 07 00
+w 07 01
+w 07 02
+w 07 03
+w 07 04
+w 07 05
+w 07 06
+w 07 07
+w 07 08
+w 07 09
+w 07 0A
+w 07 0B
+w 07 0C
+w 07 0D
+w 07 0E
+w 07 0F
+w 07 10
+w 07 11
+w 07 12
+w 07 13
+w 07 14
+w 07 15
+w 07 16
+w 07 17
+w 07 18
+w 07 19
+w 07 1A
+w 07 1B
+w 07 1C
+w 07 1D
+w 07 1E
+w 07 1F
+w 07 20
+w 07 21
+w 07 22
+w 07 23
+w 07 24
+w 07 25
+w 07 26
+w 07 27
+w 07 28
+w 07 29
+w 07 2A
+w 07 2B
+w 07 2C
+w 07 2D
+w 07 2E
+w 07 2F
+w 07 30
+w 07 31
+w 07 32
+w 07 33
+w 07 34
+w 07 35
+w 07 36
+w 07 37
+w 07 38
+w 07 39
+w 07 3A
+w 07 3B
+w 07 3C
+w 07 3D
+w 07 3E
+w 07 3F
+w 07 40
+w 07 41
+w 07 42
+w 07 43
+w 07 44
+w 07 45
+w 07 46
+w 07 47
+w 07 48
+w 07 49
+w 07 4A
+w 07 4B
+w 07 4C
+w 07 4D
+w 07 4E
+w 07 4F
+w 07 50
+w 07 51
+w 07 52
+w 07 53
+w 07 54
+w 07 55
+w 07 56
+w 07 57
+w 07 58
+w 07 59
+w 07 5A
+w 07 5B
+w 07 5C
+w 07 5D
+w 07 5E
+w 07 5F
+w 07 60
+w 07 61
+w 07 62
+w 07 63
+w 07 64
+w 07 65
+w 07 66
+w 07 67
+w 07 68
+w 07 69
+w 07 6A
+w 07 6B
+w 07 6C
+w 07 6D
+w 07 6E
+w 07 6F
+w 07 70
+w 07 71
+w 07 72
+w 07 73
+w 07 74
+w 07 75
+w 07 76
+w 07 77
+w 07 78
+w 07 79
+w 07 7A
+w 07 7B
+w 07 7C
+w 07 7D
+w 07 7E
+w 07 7F
+w 07 80
+w 07 81
+w 07 82
+w 07 83
+w 07 84
+w 07 85
+w 07 86
+w 07 87
+w 07 88
+w 07 89
+w 07 8A
+w 07 8B
+w 07 8C
+w 07 8D
+w 07 8E
+w 07 8F
+w 07 90
+w 07 91
+w 07 92
+w 07 93
+w 07 94
+w 07 95
+w 07 96
+w 07 97
+w 07 98
+w 07 99
+w 07 9A
+w 07 9B
+w 07 9C
+w 07 9D
+w 07 9E
+w 07 9F
+w 07 A0
+w 07 A1
+w 07 A2
+w 07 A3
+w 07 A4
+w 07 A5
+w 07 A6
+w 07 A7
+w 07 A8
+w 07 A9
+w 07 AA
+w 07 AB
+w 07 AC
+w 07 AD
+w 07 AE
+w 07 AF
+w 07 B0
+w 07 B1
+w 07 B2
+w 07 B3
+w 07 B4
+w 07 B5
+w 07 B6
+w 07 B7
+w 07 B8
+w 07 B9
+w 07 BA
+w 07 BB
+w 07 BC
+w 07 BD
+w 07 BE
+w 07 BF
+w 07 C0
+w 07 C1
+w 07 C2
+w 07 C3
+w 07 C4
+w 07 C5
+;============
+;== win2
+;-----------
+w 20 C4
+w 21 00
+w 22 01
+w 23 00
+w 24 22
+w 25 01
+w 26 10
+w 27 10
+w 28 00
+w 29 00
+w 2A 00
+w 2B 00
+w 2C 00
+w 2D 00
+w 2E 00
+w 2F 00
+;-----------
+; FOsdRamSetAddrAttr(start:0x100, 36>>2);
+b <TW> 04 32 00 ; Normal
+b <TW> 05 00 01 ; addr=0x100, attr=0x09=36>>2
+w 06 00
+w 08 09
+;
+b <TW> 04 32 0C ; Data auto increase with prev attr.
+b <TW> 05 00 01 ; addr=0x100
+w 06 00
+b <TW> 04 55 20 ; data = 0x100+i*2
+w 07 00
+w 07 02
+w 07 04
+w 07 06
+w 07 08
+w 07 0A
+w 07 0C
+w 07 0E
+w 07 10
+w 07 12
+w 07 14
+w 07 16
+w 07 18
+w 07 1A
+w 07 1C
+w 07 1E
+;============
+;== win3
+;-----------
+w 30 C4
+w 31 00
+w 32 01
+w 33 00
+w 34 39
+w 35 02
+w 36 10
+w 37 10
+w 38 00
+w 39 00
+w 3A 00
+w 3B 00
+w 3C 00
+w 3D 00
+w 3E 00
+w 3F 20
+;-----------
+; FOsdRamSetAddrAttr(start:0x120, 40>>2);
+b <TW> 04 32 00 ; Normal
+b <TW> 05 00 01 ; addr=0x120, attr=0x0A=40>>2
+w 06 20
+w 08 0A
+;
+b <TW> 04 32 0C ; Data auto increase with prev attr.
+b <TW> 05 00 01 ; addr=0x120
+w 06 20
+b <TW> 04 55 20 ; data = 0x120+i*3
+w 07 20
+w 07 23
+w 07 26
+w 07 29
+w 07 2C
+w 07 2F
+w 07 32
+w 07 35
+w 07 38
+w 07 3B
+w 07 3E
+w 07 41
+w 07 44
+w 07 47
+w 07 4A
+w 07 4D
+w 07 50
+w 07 53
+w 07 56
+w 07 59
+w 07 5C
+;============
+;== win4
+;-----------
+w 40 CB
+w 41 00
+w 42 01
+w 43 00
+w 44 5E
+w 45 01
+w 46 07
+w 47 10
+w 48 00
+w 49 00
+w 4A 00
+w 4B 00
+w 4C 00
+w 4D 00
+w 4E 00
+w 4F 5F
+;-----------
+; FOsdRamSetAddrAttr(start:0x15F, 48>>2);
+b <TW> 04 32 00 ; Normal
+b <TW> 05 00 01 ; addr=0x15F, attr=0x0C=48>>2
+w 06 5F
+w 08 0C
+;
+b <TW> 04 32 0C  ; Data auto increase with prev attr.
+b <TW> 05 00 01  ; addr=0x15F
+w 06 5F
+b <TW> 04 55 20  ; data=0x15F+i*4
+w 07 5F
+w 07 63 
+w 07 67
+w 07 6B
+w 07 6F
+w 07 73
+w 07 77
+
+
+w ff 0
+echo on
+
+

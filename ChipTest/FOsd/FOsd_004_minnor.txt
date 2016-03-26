@@ -1,0 +1,11 @@
+echo off
+w ff 3
+b <TW> 00 22 04
+DELAY=100
+DELAY=100
+DELAY=100
+DELAY=100
+DELAY=100
+b <TW> 00 22 00
+w ff 0
+echo on

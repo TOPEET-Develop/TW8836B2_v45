@@ -1,0 +1,98 @@
+8051 Study
+
+Memory Area
+	Program(CODE) memory
+	Internal Data memory
+		data memory
+			first 128 bytes. direct addressing.
+		idata memory
+			all 256 bytes of internal data memory. indirect addressing
+		bdata memory
+			16 bytes of bit-addressable memory (20h~2Fh).
+	External Data memory
+		access through a data pointer register.
+		up to 64K Bytes.
+		can be a memory-mapped I/O.
+		using MOVX.
+		xdata
+			large memory model.
+		pdata 
+			exactly 1 page (256bytes) of external data memory.
+			compact memory model.
+	Far Memory
+		Dallas 390, supports an extended code and data in continus mode
+		with 24-bit DPTR register, and MOVX and MOVC.
+	SFR Memory
+		
+memory Models
+	Small
+	Compact
+	Large
+		all variables, by default, reside in external data memory.
+		DPTR is used to address external memory
+
+memory types
+	code
+	data
+	idata
+	bdata
+	xdata
+	far
+	pdata
+
+Pointers
+	generic pointer
+		3Bytes. memory type+high offset+low offset.
+		Generic pointers may be used to access any variable regardless of its location in 8051 memory space.
+		The code generated for a generic pointer executes more slowly than 
+		the equivalent code generated for a memory-specific pointer 
+		because the memory area is not known until run-time. 
+	memory-specific pointers
+		always include a memory type specification in the pointer declaration 
+		and always refer to a specific memory area.
+		The code generated for a memory-specific pointer executes more quickly 
+		than the equivalent code generated for a generic pointer. 
+		This is because the memory area is known at compile-time rather than at run-time.
+	Pointer Conversions
+	Abstract Pointers
+		:example variables
+		char xdata *px;       /* ptr to xdata */
+		char idata *pi;       /* ptr to idata */
+		char code  *pc;       /* ptr to code  */
+		char c;               /* char variable in data space */
+		int  i;               /* int variable in data space */
+		/* */
+		Assigning a Function Address to a pointer
+			pc = (void *)main;
+		Casting a Data Variable Address to an IData Pointer	
+			pi = (char idata *) &i;
+		Casting an XData Pointer to an IData Pointer
+			pi = (char idata *) px;
+		Casting a Constant Value to a Code Pointer
+			pc = (char code *) 0x1234;
+		Casting a Constant Value to a Function Pointer
+			The following example casts 0xFF00 as a function pointer that takes
+			no arguments and returns an int, invokes the function, and assigns 
+			the return value to the variable i.
+			i = ((int (code *)(void)) 0xFF00) ();
+		Dereferencing a Constant Value Cast to a Code Pointer
+			c = *((char code *) 0x8000);
+		Dereferencing a Constant Value Cast to an XData Pointer
+			c += *((char xdata *) 0xFF00);
+		Dereferencing a Constant Value Cast to an IData Pointer
+			c += *((char idata *) 0xF0);
+		Dereferencing a Constant Value Cast to a PData Pointer
+			c += *((char pdata *) 0xE8);
+		Dereferencing a Constant Value Cast to a Code Pointer
+			i = *((int code *) 0x2100);
+		Dereferencing a Constant Value Cast to a Pointer to an XData Pointer to a Char in XData
+			px = *((char xdata * xdata *) 0x4000);
+		Dereferencing a Constant Value Cast to a Pointer to an XData Pointer to an Array of Char
+			px = ((char xdata * xdata *) 0x4000) [0];
+		Dereferencing a Constant Value Cast to a Pointer to an XData Pointer to an Array of Char
+			px = ((char xdata * xdata *) 0x4000) [1];
+
+.data and .bss
+	if the global varaible has a initial value, C compiler assigns it to .data.
+	if the global variable does not have a initial value, it will be assigned to .bss 
+	and cleared as 0 on start-up time.

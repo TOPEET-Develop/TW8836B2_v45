@@ -1,0 +1,48 @@
+ /*
+Disclaimer: THIS INFORMATION IS PROVIDED 'AS-IS' FOR EVALUATION PURPOSES ONLY.  
+INTERSIL CORPORATION AND ITS SUBSIDIARIES ('INTERSIL') DISCLAIM ALL WARRANTIES, 
+INCLUDING WITHOUT LIMITATION FITNESS FOR A PARTICULAR PURPOSE AND MERCHANTABILITY.  
+Intersil provides evaluation platforms to help our customers to develop products. 
+However, factors beyond Intersil's control could significantly affect Intersil 
+product performance. 
+It remains the customers' responsibility to verify the actual system performance.
+*/
+
+
+//==================================================================
+// only for test routines
+//==================================================================
+CODE BYTE DataInitTCON[] = {
+
+0x00, 0x00,
+	
+0xFF, 0x00,	// //--- Page 00
+0x06, 0x06,	// // TSCP,TRSP
+0x07, 0x00,	// // TCON enable
+
+// SSPLL
+//0xF8, 0x01,	//
+//0xF9, 0x50,	//
+//0xFA, 0x00,	//
+//0xFC, 0x23,	// // En. SSPLL
+//0xFD, 0x23,	//
+
+0xFF, 0x02,	//  // Page 02
+////--- TCON
+0x42, 0x05,
+0x43, 0x01,
+0x44, 0x64,
+0x45, 0xF4,
+0x47, 0x0A,
+0x48, 0x36,
+0x4C, 0x00,
+0x4D, 0x44,
+0x4E, 0x04,
+
+0xE0, 0x00,	// // Disable Gamma
+0xE4, 0x21,	// // Dither
+
+0xff, 0xff
+};
+
+
