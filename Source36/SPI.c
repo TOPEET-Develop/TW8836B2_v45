@@ -749,7 +749,8 @@ code BYTE async_wait_value[] = {
     Remove commnet if you want to use.
     But, do not use NA or NG column.
 */
-code struct SPIFLASH_DIMEMSION spiflash_chip_table[] = {
+code struct SPIFLASH_DIMEMSION spiflash_chip_table[] =
+{
 /* Macronix*/
 //	{ 0xC2,0x20,0x16,	32,		SPI_READ_QUADIO,    104, SSPLL1_104M_REGS,  0,0,2,0,    "MX25L3233F"},	 /*6 dummy, SHSL:15*/
 //
@@ -845,8 +846,8 @@ code struct SPIFLASH_DIMEMSION spiflash_chip_table[] = {
 //	{ 0xC8,0x40,0x15,	16,		SPI_READ_QUADIO,    108,SSPLL1_108M_REGS,   0,0,2,0,	"GD25Q16B"},
 //	{ 0xC8,0x40,0x16,	32,		SPI_READ_QUADIO,    108,SSPLL1_108M_REGS,   0,0,2,0,	"GD25Q32B"},
 //	{ 0xC8,0x40,0x17,	64,		SPI_READ_QUADIO,    108,SSPLL1_108M_REGS,   0,0,2,0,	"GD25Q64C"},
-//	{ 0xC8,0x40,0x18,	128,	SPI_READ_QUADIO,    80, SSPLL1_80M_REGS,    0,0,2,0,	"GD25Q128C"},
-/*	{ 0xC8,0x40,0x20,	512,	SPI_READ_QUADIO,    104,SSPLL1_104M_REGS,   0,0,2,0,	"GD25Q512MC"}, No Sample*/
+	{ 0xC8,0x40,0x18,	128,	SPI_READ_QUADIO,    80, SSPLL1_80M_REGS,    0,0,2,0,	"GD25Q128C"},
+	{ 0xC8,0x40,0x20,	512,	SPI_READ_QUADIO,    104,SSPLL1_104M_REGS,   0,0,2,0,	"GD25Q512MC"},
 //
 /*ISSI*/
 /*
@@ -1118,7 +1119,8 @@ struct SPIFLASH_DIMEMSION *find_spiflash_chip(void)
 	
 	SpiFlash_DmaCmd(SPICMD_RDID,DMA_TARGET_CHIP, 0x4D0, 3, DMA_OPT_NONE);
 	ret=SpiFlash_wait_done(10,10);
-	if(ret) {
+	if (ret) 
+	{
 		Puts(" SPICMD_RDID fail");
 		mid = 0;
 		did0 = 0;
@@ -1133,10 +1135,12 @@ struct SPIFLASH_DIMEMSION *find_spiflash_chip(void)
 	Printf(" %02bx:%02bx:%02bx", mid,did0,did1);
 
 	spiflash1_chip = spiflash_chip_table;	
-	while(spiflash1_chip->mid) {
-		if(spiflash1_chip->mid == mid) {
-			if(spiflash1_chip->did0 == did0
-			&& spiflash1_chip->did1 == did1) {
+	while (spiflash1_chip->mid)
+	{
+		if (spiflash1_chip->mid == mid)
+		{
+			if (spiflash1_chip->did0 == did0 && spiflash1_chip->did1 == did1)
+			{
 				/* found */
 				Printf(" %s", spiflash1_chip->name);
 				return spiflash1_chip;
@@ -1146,6 +1150,7 @@ struct SPIFLASH_DIMEMSION *find_spiflash_chip(void)
 	}
 	Puts(" search fail");
 	Puts("\n\rWarning:Unknown SPIFLASH. System can be corrupted");
+
 	return spiflash1_chip; /*unknown chip. It has spiflash_chip->mid=0.*/
 }
 
