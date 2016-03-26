@@ -8,6 +8,7 @@
 bin/
 tmp/
 output/
+*.hex
 *.tmp
 *.bak
 *.swp
@@ -179,3 +180,7 @@ pip-log.txt
 # Keil
 *.uvproj
 *.uvopt
+
+/List
+*.lst
+*.map
