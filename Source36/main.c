@@ -234,7 +234,8 @@ void main(void)
 	BYTE ret;
 
 #ifdef SUPPORT_WATCHDOG
-	if(SFRB_WTRF) {
+	if (SFRB_WTRF) 
+	{
         /* If WTRF was 1, system was reboot by Watchdog.
            Watchdog only reboot MCU, not VideoCore.
         */
@@ -281,7 +282,8 @@ void main(void)
     	FW will be a no_init mode.
     	In this no_init mode, FW will support only the monitor.
     	*/  
-    	if(g_access==0) {
+    	if (g_access == 0)
+		{
         	/* In this no_init mode, FW will support only the monitor.	*/  
     		Puts("***SKIP_MODE_ON***\r\n");
     		DebugLevel=3;
@@ -578,22 +580,21 @@ BYTE check_NoInit_mode_port(void)
 {
 	BYTE bTemp;
     BYTE ret;
+
 #ifdef MODEL_TW8836DEMO
     return 0;
 #endif
+
 	bTemp = ReadTW88(REG007);
 	WriteTW88(REG007, 0x02);
-	if(PORT_NOINIT_MODE == 1) 
-        ret=1;   /* NoInitMode */
+	if (PORT_NOINIT_MODE == 1) 
+        ret = 1;   /* NoInitMode */
     else
-        ret=0;
-	WriteTW88(REG007,bTemp);
+        ret = 0;
+	WriteTW88(REG007, bTemp);
 
     return ret;
 }
-
-
-
 
 //-----------------------------------------------------------------------------
 /**
@@ -610,9 +611,11 @@ void InitCore(BYTE fManual)
 
 	Puts("InitCore");
 
-    if(!fManual) {
+    if (!fManual)
+	{
         bTemp = check_NoInit_mode_port();
-        if(bTemp) {
+        if (bTemp)
+		{
             CurrSystemMode = SYS_MODE_NOINIT;
             //To turn on the SKIP_MODE, assign g_access as 0.
             g_access = 0;
@@ -632,19 +635,21 @@ void InitCore(BYTE fManual)
 
 	/* Initialize SpiFlash chip */
 	bTemp = init_spiflash_chip();
-	if(bTemp == ERR_FAIL) {
+	if (bTemp == ERR_FAIL)
+	{
         //SPI DMA does not work.
 		//we need a reboot.
 		CurrSystemMode = SYS_MODE_NOINIT;
         Puts("Fail SPIFLASH\n");
 		g_access = 0;
+		
 		return; // ERR_FAIL;
 	}
-    /* Enable Chip Interrupt. */
-    WriteTW88(REG002, 0xFF );	// Clear Pending Interrupts
-    WriteTW88(REG003, 0xEE );	// enable SW. enable SW INTR7FF
-}
 
+    /* Enable Chip Interrupt. */
+    WriteTW88(REG002, 0xFF);	// Clear Pending Interrupts
+    WriteTW88(REG003, 0xEE);	// enable SW. enable SW INTR7FF
+}
 
 /**
 * InitLVDS Tx
@@ -1743,9 +1748,6 @@ BYTE InitRCDMode(BYTE fPowerUpBoot)
 	return ret;
 }
 #endif
-
-
-
 
 //-----------------------------------------------------------------------------
 /**

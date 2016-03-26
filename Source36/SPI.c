@@ -1106,7 +1106,6 @@ BYTE check_4b_all(void)
 	}
 }
 
-
 /*!
  *	Read JEDEC id and search table.
  *  If fail, it will have a {0x00,0x00,0x00,} table.
@@ -1160,11 +1159,14 @@ BYTE init_spiflash_chip(void)
 
 	Puts("SpiFlash ");
 	spiflash_chip = find_spiflash_chip();
-	if(spiflash_chip == NULL) {
+	if (spiflash_chip == NULL)
+	{
         /* something wrong...use NoINIT mode */
 		return ERR_FAIL;
 	}
-	if(spiflash_chip->mid == 0) {
+
+	if (spiflash_chip->mid == 0)
+	{
 		//---------------------
         //FW failed to detect SPIFLASH.
 		//FAST is better than single.
@@ -1174,9 +1176,11 @@ BYTE init_spiflash_chip(void)
         //    return ERR_FAIL;
 		return ERR_SUCCESS;
 	}
+
 	/* Check fast read mode. Is it QuadO or QuadIO ? */
 	ret = quadio_check_all();
-	if(ret==0) {
+	if (ret == 0)
+	{
         /* Quad did not enabled, enable Quad */
 		Puts(" EnQuad");
 		ret=quadio_enable_all();
@@ -1185,18 +1189,22 @@ BYTE init_spiflash_chip(void)
 
 	/* setup fast read mode; Quad or QuadIO */
 	SpiFlash_SetReadModeByRegister(spiflash_chip->fast_mode);
-	if(spiflash_chip->fast_mode ==3)	Puts(" QuadO");
-	else								Puts(" QuadIO");		
+	if (spiflash_chip->fast_mode == 3)
+		Puts(" QuadO");
+	else
+		Puts(" QuadIO");		
 
-	if(spiflash_chip->size > 128) {
+	if (spiflash_chip->size > 128)
+	{
         /* enable 4Byte address mode */
 		SpiFlash_Set4BytesAddress(ON);
-		if(SpiFlash4ByteAddr) 
+		if (SpiFlash4ByteAddr) 
 			Puts(" En4B");
 	}
 	Puts("\n");
 
-	if(spiflash_chip->mid==SPIFLASH_MID_SPANSION) {
+	if (spiflash_chip->mid == SPIFLASH_MID_SPANSION)
+	{
 		//S25FL 256 S AG M F I 0 0 1
 		//                       |
 		//                       +- Model Number (Sector Type)
@@ -1216,14 +1224,14 @@ BYTE init_spiflash_chip(void)
 		else if(spiflash_chip->did1==0x18) e3p_spi_start_addr = 0x01000000 - 0x20000;	//128Mbit
 		else if(spiflash_chip->did1==0x19) e3p_spi_start_addr = 0x02000000 - 0x20000;	//256Mbit
 		else if(spiflash_chip->did1==0x20) e3p_spi_start_addr = 0x04000000 - 0x20000;	//512Mbit
-		else {
+		else
+		{
 			Puts("\n\rError. Spansion (512 or bigger) does not support 4kByte Secotr");
 		}
     }
 
 	return ERR_SUCCESS;
 }
-
 
 /**
  *

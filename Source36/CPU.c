@@ -1535,7 +1535,8 @@ void init_cpu(BYTE fWatchDog)
 	TWBASE = 0x00;					// Base address of TW88xx
 	SFR_CAMC = 1;					// Chip Access Mode Control. E2[0]=1b:16bit mode
 
-    if(!fWatchDog) {
+    if (!fWatchDog) 
+	{
     	//---------- Initialize Timer Divider ---------
     	WriteTW88(REG4E2, 0x69);		// Timer0 Divider : system tic 0. 
     	WriteTW88(REG4E3, 0x78);		// 27M/27000 = 1msec
@@ -1555,8 +1556,9 @@ void init_cpu(BYTE fWatchDog)
     	/*If you want the UART1 swap, add below code. */
     	/* WriteTW88(REG04B, ReadTW88(REG04B) | 0x40);	*/
     }
+
 #ifdef DEBUG_ISR
-	for(i=0; i < 21; i++)
+	for (i=0; i < 21; i++)
 		INTR_counter[i]=0;
 #endif
 
@@ -1665,14 +1667,18 @@ void init_cpu(BYTE fWatchDog)
                             // ||+------ ET2    : timer2 - remocon
                             // |+------- ES1    : UART1
                             // +-------- EA     : Global Interrupt. I will enable it below.
+
 #ifdef SUPPORT_UART1
 	SFRB_ES1  = 1;			// UART1  	: External MCU
 #endif
+
 	//---------- Serial FIFO ----------
 	SFR_UART0FIFO = 0x80;	//          : UART0 FIFO
+
 #ifdef SUPPORT_UART1
 	SFR_UART1FIFO = 0x80;	//          : UART1 FIFO
 #endif
+
 	//---------- Enable global Interrupt ----------
 	SFRB_EA   = 1;			// Global Interrupt
 
@@ -1710,8 +1716,10 @@ void init_cpu(BYTE fWatchDog)
 
 	Puts("\n\n");
 	Puts("init_cpu");
-	if(SFR_WDCON & 0x04) 
+
+	if (SFR_WDCON & 0x04) 
         Puts(" WTRF");   //<--SFRB_WTRF
+
 	Puts("\n");
 
 	/* BKFYI:
@@ -1730,8 +1738,6 @@ void init_cpu(BYTE fWatchDog)
 		The cache enable routine is moved to InitCore.
 	*/
 }
-
-
 
 //=============================================================================
 //		Time

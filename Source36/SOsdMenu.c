@@ -437,7 +437,6 @@ BYTE NoSignalLogoShow;
 */
 void InitLogo1(void)
 {
-	//--------------------------
 	struct image_item_info_s *image;
 	menu_image_header_t *header = &header_table;
 	WORD lut_loc;
@@ -452,24 +451,27 @@ void InitLogo1(void)
 	WaitVBlank(1);
 	SpiFlash_Read_XMem(img_customer.loc, (WORD)&rle_header, sizeof(struct RLE2_HEADER));
 	//SpiFlashDmaRead2XMem((BYTE *)&rle_header, img_customer.loc, sizeof(struct RLE2_HEADER), SPIFLASH_WAIT_READ);
-	if(rle_header.id[0]!='I' || rle_header.id[1]!='T') {
+	if (rle_header.id[0]!='I' || rle_header.id[1]!='T')
+	{
 		Printf("\n\rCustomer Logo failed...Use IntersilLogo");
 		customer_logo = 0;
 	}
-	
 
-	if(customer_logo==0) { 
+	if (customer_logo == 0)
+	{ 
 		//BK130417. Add check routine.
 		//If fail, it can hangup system.
 		WaitVBlank(1);
 		SpiFlash_Read_XMem(img_logo.loc, (WORD)&rle_header, sizeof(struct RLE2_HEADER));
 		//SpiFlashDmaRead2XMem((BYTE *)&rle_header, img_logo.loc, sizeof(struct RLE2_HEADER), SPIFLASH_WAIT_READ);
-		if(rle_header.id[0]!='I' || rle_header.id[1]!='T') {
+		if (rle_header.id[0]!='I' || rle_header.id[1]!='T')
+		{
 			Printf("\n\rInitLogo failed...Do not use SpiOSD!!!!");
 			Printf(" %bx %bx",rle_header.id[0],rle_header.id[1]);
 			return;
 		}
 	}
+	
 	NoSignalLogoShow = 1;
 
 	//init DE
@@ -478,39 +480,40 @@ void InitLogo1(void)
 	SOsd_CleanReg();
 	SOsd_CleanLut();
 	SOsd_CleanRlc();
-	SOsd_UpdateReg(0,8);
+	SOsd_UpdateReg(0, 8);
 	SOsd_UpdateRlc();
 
 	SpiOsdEnable(ON);
 
-	if(customer_logo) 
+	if (customer_logo) 
 		image = &img_customer;
 	else
 		image = &img_logo;
+	
 	lut_loc = 0x000;
 	//lut_size = 0x004 << (image->rle >> 4);
 
 	//prepare header. update header_table
 	MenuPrepareImageHeader(image);
 
-
 	SOsd_SetSpiStartOffset(WIN_LOGO, header->image_loc); 
 	SOsd_SetImageWidthHeight( WIN_LOGO, header->dx, header->dy );
 	SOsd_SetScreen( WIN_LOGO, sx, sy, header->dx, header->dy );
-	if(WIN_LOGO==0) {
+	if (WIN_LOGO == 0)
+	{
 		SOsd_SetWin0ImageOffsetXY( 0, 0 );
 		SOsd_SetWin0Animation( 1, 0, 0, 0);
 	}
-	SOsd_SetPixelAlpha( WIN_LOGO, ON );
-	SOsd_SetGlobalAlpha( WIN_LOGO, 0);
+	SOsd_SetPixelAlpha(WIN_LOGO, ON );
+	SOsd_SetGlobalAlpha(WIN_LOGO, 0);
 	SOsd_SetPixelWidth(WIN_LOGO, header->bpp);
 	SOsd_SetLutOffset(WIN_LOGO, 0 /* menu_item->osd_s.lut */);
 
-	SOsd_Enable( WIN_LOGO, ON );
+	SOsd_Enable(WIN_LOGO, ON);
 
 	//write to HW
-	if(header->rle)
-		SOsd_SetRlc(WIN_LOGO, header->bpp,header->rle);
+	if (header->rle)
+		SOsd_SetRlc(WIN_LOGO, header->bpp, header->rle);
 
 	//update HW ---same as SOsd_show()
 	WaitVBlank(1);
@@ -524,7 +527,7 @@ void InitLogo1(void)
 	SOsd_UpdateLut(WIN_LOGO, 1);	
 #else
 	SOsd_SetLut(WIN_LOGO, header->lut_type, lut_loc, header->lut_size, header->lut_loc, image->alpha);
-	SOsd_UpdateLut(WIN_LOGO,0);
+	SOsd_UpdateLut(WIN_LOGO, 0);
 #endif
 	// finish draw
 }

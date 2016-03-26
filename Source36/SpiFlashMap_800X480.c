@@ -520,18 +520,6 @@ code image_item_info_t img_demo_15			= {1, SLIDESHOW_START+0x67BFB0, NULL, 0xff}
 //I need a custom logo...I will remove img_demo_16 and use igm_custom
 code image_item_info_t img_customer			= {1, 0xF40000,                 NULL, 0xff}; // Bar327x45_8bpp   
 
-
-
-
-
-
-
-
-
-
-
-
-
 //typedef struct MonOsdData_s {
 //	struct image_item_info_s *image;
 //	BYTE name[10];	
