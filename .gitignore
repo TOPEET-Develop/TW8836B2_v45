@@ -162,3 +162,20 @@ pip-log.txt
 
 # Mac crap
 .DS_Store
+
+# source insight
+*.IAB
+*.IAD
+*.IMB
+*.IMD
+*.PFI
+*.PO
+*.PRI
+*.PS
+*.PR
+*.SearchResults
+*.WK3
+
+# Keil
+*.uvproj
+*.uvopt
