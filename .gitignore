@@ -8,7 +8,6 @@
 bin/
 tmp/
 output/
-*.hex
 *.tmp
 *.bak
 *.swp
@@ -184,3 +183,6 @@ pip-log.txt
 /List
 *.lst
 *.map
+
+/Output
+*.hex
