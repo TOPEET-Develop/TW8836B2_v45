@@ -121,14 +121,14 @@ void DumpFontOsdPalette(void)
 	//disable all FontOsd/SpiOsd Windows
 	InitFontRamByNum(FONT_NUM_DEF12X18, 0);	//InitFontRam(0, &default_font,"def");
 	//FOsdInitBpp3AlphaTable();
-	for(i=0; i < 4; i++) {
+	for (i = 0; i < 8; i++)
+	{
 		FOsdWinInit(i);
 		FOsdWinSetOsdRamStartAddr(i, 0);
 	}
 
 	WaitVBlank(1);
 	FOsdWinEnable(fosd->win,OFF);	// disable
-
 
 	FOsdWinScreenXY(fosd->win, 0x10,0x0D);		//sx,sy, n_char, fosd->h);
 	FOsdWinScreenWH(fosd->win, 0x20, 0x10);		//sx,sy, n_char, fosd->h);
@@ -145,25 +145,30 @@ void DumpFontOsdPalette(void)
 	//OsdRamAddr <<= 1;				//make a word size.
 
 	// set address & write the default attribute
-	WriteTW88(REG304, 0x0c ); // Auto Inc. use under 256 char index
+	WriteTW88(REG304, 0x0c); // Auto Inc. use under 256 char index
 
-	for(i=0; i < 0x10; i++) {
-		for(j=0; j < 0x10; j++) {
+	for (i = 0; i < 0x10; i++)
+	{
+		for (j = 0; j < 0x10; j++)
+		{
 			FOsdRamSetAddrAttr((i*16+j) << 1, (i << 4) | j);  //Note:WORD size(BG|FG).
 
-			if(i >= 10) WriteTW88(REG307, 0x41+i-10);	//draw A to F
-			else 		WriteTW88(REG307, 0x30+i);	//draw 0 to 9
+			if (i >= 10)
+				WriteTW88(REG307, 0x41+i-10);	//draw A to F
+			else
+				WriteTW88(REG307, 0x30+i);	//draw 0 to 9
 
-			if(j >= 10) WriteTW88(REG307, 0x41+j-10);	//draw A to F
-			else 		WriteTW88(REG307, 0x30+j);	//draw 0 to 9
+			if (j >= 10)
+				WriteTW88(REG307, 0x41+j-10);	//draw A to F
+			else
+				WriteTW88(REG307, 0x30+j);	//draw 0 to 9
 		}
 	}
 
-
 	//=================================
-	WriteTW88(REG304, 0x0c );			// Display RAM Access Mode
+	WriteTW88(REG304, 0x0c);			// Display RAM Access Mode
 
-	FOsdWinEnable(fosd->win,ON);	//win0 enable
+	FOsdWinEnable(fosd->win, ON);	//win0 enable
 }
 
 //description
