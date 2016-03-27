@@ -28,3 +28,6 @@
 *.obj
 *.hex
 
+*.hex
+*.uvopt
+*.uvproj
