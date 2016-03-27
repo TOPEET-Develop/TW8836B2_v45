@@ -84,65 +84,85 @@ extern void MenuKeyInput(BYTE key);
 void MonitorMenu(void)
 {
 //	int x, y;
-	if(!stricmp( argv[1], "?")) {
+	
+	if (!stricmp(argv[1], "?"))
+	{
 		Puts("\n\r  === Help for MENU command ===");
 		Puts("\n\rmenu start					;start main menu");
 		Puts("\n\rmenu [up|down|right|left]	;menu arrow key");
 		Puts("\n\rmenu enter					;enter key");
 		Puts("\n\rmenu exit					;exit key");
+
 		return;
 	}
 
-	if(argc != 3)	{
+	if (argc != 3)
+	{
 		//Puts("\n\rmenu x y");
 
-		if(TaskGetGrid()) {
-			if(!stricmp( argv[1], "up")) {
+		if (TaskGetGrid())
+		{
+			if (!stricmp(argv[1], "up"))
+			{
 				TaskSetGridCmd(NAVI_KEY_UP);
 			}
-			else if(!stricmp( argv[1], "down")) {
+			else if (!stricmp(argv[1], "down"))
+			{
 				TaskSetGridCmd(NAVI_KEY_DOWN);
 			}
-			else if(!stricmp( argv[1], "left")) {
+			else if (!stricmp(argv[1], "left"))
+			{
 				TaskSetGridCmd(NAVI_KEY_LEFT);
 			}
-			else if(!stricmp( argv[1], "right")) {
+			else if (!stricmp(argv[1], "right"))
+			{
 				TaskSetGridCmd(NAVI_KEY_RIGHT);
 			}
-			else if(!stricmp( argv[1], "enter")) {
+			else if (!stricmp(argv[1], "enter"))
+			{
 				TaskSetGridCmd(NAVI_KEY_ENTER);
 			}
+
 			return;
 		}
-		if(MenuGetLevel()) {
-			if(!stricmp( argv[1], "up")) {
+		
+		if (MenuGetLevel())
+		{
+			if (!stricmp(argv[1], "up"))
+			{
 				MenuKeyInput(NAVI_KEY_UP);
 			}
-			else if(!stricmp( argv[1], "down")) {
+			else if (!stricmp(argv[1], "down"))
+			{
 				MenuKeyInput(NAVI_KEY_DOWN);
 			}
-			else if(!stricmp( argv[1], "left")) {
+			else if (!stricmp(argv[1], "left"))
+			{
 				MenuKeyInput(NAVI_KEY_LEFT);
 			}
-			else if(!stricmp( argv[1], "right")) {
+			else if (!stricmp(argv[1], "right"))
+			{
 				MenuKeyInput(NAVI_KEY_RIGHT);
 			}
-			else if(!stricmp( argv[1], "enter")) {
+			else if (!stricmp(argv[1], "enter"))
+			{
 				MenuKeyInput(NAVI_KEY_ENTER);
 			}
 		}
 
-
-		if(!stricmp( argv[1], "start" ))  {
+		if (!stricmp(argv[1], "start"))
+		{
 			Printf("\n\rcall MenuStart");
 			//proc_home_menu_start();
 			MenuStart();
 		}
-		else if(!stricmp( argv[1], "exit" ))  {
+		else if (!stricmp(argv[1], "exit"))
+		{
 			Printf("\n\rcall MenuEnd");
 			MenuEnd();
 		}
-		else if(!stricmp( argv[1], "test1")) {
+		else if (!stricmp(argv[1], "test1"))
+		{
 			//draw 1bpp FOSD Palette
 			//environmemt
 			//	w ff 3
@@ -151,17 +171,21 @@ void MonitorMenu(void)
 			//
 			DumpFontOsdPalette();
 		}
-		else if(!stricmp( argv[1], "test2")) {
+		else if (!stricmp(argv[1], "test2"))
+		{
 			//FOSD FIFO test.
 			Test16x32FontSet();
 		}
-		else if(!stricmp( argv[1], "test3")) {
+		else if (!stricmp(argv[1], "test3"))
+		{
 			TestUpper256Char();
 		}
-		else if(!stricmp( argv[1], "test4")) {
+		else if (!stricmp(argv[1], "test4"))
+		{
 			TestMultiBPP4();
 		}
-		else if(!stricmp( argv[1], "test5")) {
+		else if (!stricmp(argv[1], "test5"))
+		{
 			TestNum1BPP3BPP();
 		}
 		//else if(!stricmp( argv[1], "main1")) {
@@ -174,9 +198,9 @@ void MonitorMenu(void)
 		//	TestMainMenuImage(3);
 		//}
 
-
 		return;
 	}
+
 //	x=a2h(argv[1]);
 //	y=a2h(argv[2]);
 //   	Printf("\n\r ECHO: menu x:%d y:%d", x,y);
