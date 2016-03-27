@@ -290,7 +290,8 @@ void main(void)
     		Puts("need **init core***init ee***init system***\r\n");
     		Puts("and **cache on**access on**task on**isr on\r\n*");
         }
-    	SetMonAddress(TW88I2CAddress);
+
+		SetMonAddress(TW88I2CAddress);
     	Prompt(); /*first prompt*/
 
     	//==================================================
@@ -302,20 +303,22 @@ void main(void)
 #ifdef DEBUG_TIME
 	PrintSystemClockMsg("start loop");
 #endif
+
 	Prompt(); //second prompt
 
     /* Enable INT0: Chip Interrupt */
     SFRB_EX0  = 1;			
 
-	while(1) 
+	while (1) 
 	{
 		//==================================================
 		// MAIN LOOP
 		//==================================================
-		ret=main_loop();		
-		Printf("main_loop() ret %bd\r\n",ret);		
-		if(ret==RET_MAIN_LOOP_PSM_BY_REMO 
-        || ret==RET_MAIN_LOOP_PSM_BY_PORT) {
+		ret = main_loop();		
+		
+		Printf("main_loop() ret %bd\r\n", ret);		
+		if (ret==RET_MAIN_LOOP_PSM_BY_REMO || ret==RET_MAIN_LOOP_PSM_BY_PORT)
+		{
 			SystemPowerSave();		//move to PowerSaveMode	
 			WaitPowerOn();			//wait PowerOn input from keypad, Remo. not Touch
 			SystemPowerResume();	//resume
@@ -324,7 +327,6 @@ void main(void)
 	}	
 	//you can not be here...
 }
-
 
 //-----------------------------------------------------------------------------
 #ifdef DEBUG_WATCHDOG
@@ -418,18 +420,20 @@ BYTE main_loop(void)
 	//---------------------------------------------------------------
 	//			             Main Loop 
 	//---------------------------------------------------------------
-	while(1) {
+	while (1)
+	{
 		//-------------- Check Serial Port ---------------------
-		if(RS_ready()) 
+		if (RS_ready()) 
 			Monitor();				// for new monitor functions
+
 #ifdef SUPPORT_UART1
-		if(RS1_ready())
+		if (RS1_ready())
 			Monitor1();				// for UART1
 #endif
 
 		//-------------- Check Watchdog ------------------------
 #ifdef DEBUG_WATCHDOG
-		if( F_watch )
+		if (F_watch)
 			DebugRestartWatchdog();
 #elif defined(SUPPORT_WATCHDOG)
 		/*refresh watchdog counter.*/
@@ -437,22 +441,28 @@ BYTE main_loop(void)
 #endif
 
 		//-------------- block access routines -----------------
-		if ( g_access == 0 ) continue;		
+		if (g_access == 0) 
+			continue;		
 		/* NOTE: If you donot have an access, You can not pass */
 
  		//-------------- Check Keypad input --------------------
-		if((CpuAUX3 >= 0x100) || SW_key) {
+		if ((CpuAUX3 >= 0x100) || SW_key)
+		{
 			ret = CheckKeyIn();
-			if(ret == REQUEST_POWER_OFF) {
+			if (ret == REQUEST_POWER_OFF)
+			{
 				Printf("\n\r===POWER SAVE===by Keypad");
 				ret = RET_MAIN_LOOP_PSM_BY_REMO;
 				break;
 			}
 		}
+		
  		//-------------- Check Remote Controller ---------------
-		if(RemoDataReady) {
+		if (RemoDataReady)
+		{
 			ret = CheckRemo();
-			if(ret == REQUEST_POWER_OFF && CurrSystemMode==SYS_MODE_NORMAL) {
+			if (ret == REQUEST_POWER_OFF && CurrSystemMode==SYS_MODE_NORMAL)
+			{
 				ePrintf("\n\r===POWER SAVE===by Remo");
 				ret = RET_MAIN_LOOP_PSM_BY_REMO;
 				break;
@@ -462,35 +472,41 @@ BYTE main_loop(void)
 		//-------------- Check Touch ---------------
 #ifdef SUPPORT_TOUCH
 #ifdef DEBUG_TOUCH_SW
-		if(TraceAuto) 
+		if (TraceAuto) 
 			TraceTouch();
 #endif
-		if(IsTouchInput()) {
+		if (IsTouchInput())
+		{
 			ret = GetTouch2();
-			if(ret)
+			if (ret)
 				ActionTouch();		
 		}
 #endif
 
-
  		//-------------- Check special port for RCD mode------
 #ifdef SUPPORT_RCD
-		if(ReadTW88(REG007) & 0x08) {
+		if (ReadTW88(REG007) & 0x08)
+		{
 			;  //conflict with BT656Enc...just give up.
 		}
-		else {
+		else
+		{
 			//It was using IsBackDrivePortOn().
 			//Now, we are using EEPROM value.
-			if(EE_Read(EEP_BOOTMODE)==1) {
-				if(CurrSystemMode==SYS_MODE_NORMAL) {
+			if (EE_Read(EEP_BOOTMODE) == 1)
+			{
+				if (CurrSystemMode == SYS_MODE_NORMAL)
+				{
 					//move to RCD mode.
 					CurrSystemMode = SYS_MODE_RCD;
 					InputMain = 0;	//dummy
 					InitRCDMode(0);
 				}
 			}
-			else {
-				if(CurrSystemMode==SYS_MODE_RCD) {
+			else
+			{
+				if (CurrSystemMode==SYS_MODE_RCD)
+				{
 					DWORD BootTime;
 					
 					BootTime = SystemClock;
@@ -513,20 +529,21 @@ BYTE main_loop(void)
 #endif	
 		
 		//============== Task Section ==========================
-		if(Task_Grid_on)
+		if (Task_Grid_on)
 			MovingGridTask();
 
 #ifdef SUPPORT_RCD
 		//skip VideoISR on RCD.
-		if(CurrSystemMode==SYS_MODE_RCD)
+		if (CurrSystemMode==SYS_MODE_RCD)
 			continue;					
 #endif
 
 		//-------------- Check TW8836 Chip Interrupt -------------
-		if(INT_STATUS || VH_Loss_Changed )
+		if (INT_STATUS || VH_Loss_Changed)
 			InterruptPollingHandlerRoutine();
 
-		if(INT_STATUS3) {
+		if (INT_STATUS3)
+		{
 			extern DWORD ExtIntCount;
 			Printf("\n\rINT_STATUS3:%bx  count: %ld",INT_STATUS3, ExtIntCount );
 			INT_STATUS3 = 0;
@@ -534,8 +551,8 @@ BYTE main_loop(void)
 
 		//-------------- Check OSD timer -----------------------
 #if 0
-		if(OsdTime
-		&& OsdTimerClock) {
+		if (OsdTime && OsdTimerClock)
+		{
 			Puts("O");
 			CheckAndClearOSD();
 		}
@@ -548,7 +565,8 @@ BYTE main_loop(void)
 
 		//-------------- I2CCMD -------------------------------
 #if defined(SUPPORT_I2CCMD_SERVER)
-		if(F_i2ccmd_exec) {
+		if (F_i2ccmd_exec)
+		{
 			F_i2ccmd_exec = 0;
 			I2CCMD_exec_main();
 		}
@@ -863,7 +881,7 @@ BYTE InitSystem(BYTE _fPowerUpBoot)
 	BYTE FirstInitDone;
 	BYTE fPowerUpBoot;	//to solve the compiler bug, use a variable.
 
-	if(g_access==0)
+	if (g_access == 0)
 		//do nothing.
 		return 0;
 
@@ -873,12 +891,15 @@ BYTE InitSystem(BYTE _fPowerUpBoot)
 #ifdef USE_SFLASH_EEPROM
 	E3P_Configure();
 #endif
+
 #ifdef NO_EEPROM
 	ee_mode = 0;
 #else
 	ee_mode = CheckEEPROM();
 #endif
-	if(ee_mode==1) {
+
+	if (ee_mode == 1)
+	{
 		//---------- if FW version is not matched, initialize EEPROM data -----------
 		DebugLevel = 3;
 
@@ -907,6 +928,7 @@ BYTE InitSystem(BYTE _fPowerUpBoot)
 
 		return 0;
 	}
+	
 #ifdef SUPPORT_RCD
 	/* 
 		TW8836B EVB does not have extra GPIO pin to check this mode.
@@ -917,7 +939,8 @@ BYTE InitSystem(BYTE _fPowerUpBoot)
 
 		Note: Current design have a conflict when it reboot by watchdog.
 	*/
-	if(EE_Read(EEP_BOOTMODE)==1) {
+	if (EE_Read(EEP_BOOTMODE) == 1)
+	{
 		//If it is a RCD mode, FW will init only minimum routines for RCD.
 		CurrSystemMode = SYS_MODE_RCD; 
 		InputMain = 0;	//dummy
@@ -928,17 +951,16 @@ BYTE InitSystem(BYTE _fPowerUpBoot)
 
 	/* read debug level */
 	DebugLevel = GetDebugLevelEE();
-	if(DebugLevel != 0)
+	if (DebugLevel != 0)
 		ePrintf("\n\r===> Debugging is ON (%02bx)", DebugLevel);
 
 	Printf("\n\rInitSystem(%bd)",fPowerUpBoot);
 
-	if((SFR_WDCON & 0x04)) {
+	if ((SFR_WDCON & 0x04))
+	{
 		Printf("WDCON: 0x%bx", SFR_WDCON);
 		//EE_Increase_Counter_Watchdog();
     }
-
-
 
 	/* read main input */
 	InputMain  = GetInputMainEE();
@@ -947,9 +969,10 @@ BYTE InitSystem(BYTE _fPowerUpBoot)
 	//
 	//set default setting.
 	//
-	if(fPowerUpBoot) {
+	if (fPowerUpBoot)
+	{
 		//Init HW with default.
-		Init8836AsDefault(InputMain, 1 ); 
+		Init8836AsDefault(InputMain, 1); 
 		I2C_delay_base = 1;
 							
 		//------------------
@@ -958,10 +981,10 @@ BYTE InitSystem(BYTE _fPowerUpBoot)
 		InitGpioDefault();
 
 		Puts("\nEnable OutputPin");
-		OutputEnablePin(OFF,ON);		//Output enable. FP data: not yet
+		OutputEnablePin(OFF, ON);		//Output enable. FP data: not yet
 
 #if defined(SUPPORT_I2C_MASTER)
-		if(DebugLevel >= DEBUG_WARN)
+		if (DebugLevel >= DEBUG_WARN)
 			CheckGpioExpender(fPowerUpBoot);
 #endif
 
@@ -971,7 +994,6 @@ BYTE InitSystem(BYTE _fPowerUpBoot)
 		InitLVDSTx();
 #endif
 	}
-
 
 	//------------------------
 	// init HDMI chip for EDID & HDCP.
@@ -984,7 +1006,7 @@ BYTE InitSystem(BYTE _fPowerUpBoot)
 	//---------------------
 	// turn on DCDC
 	//---------------------
-	if(fPowerUpBoot)
+	if (fPowerUpBoot)
 		FrontPanel_StartUP();
 
 	//---------------
@@ -1006,20 +1028,23 @@ BYTE InitSystem(BYTE _fPowerUpBoot)
 #ifdef DEBUG_TIME
 	PrintSystemClockMsg("Finish StartVideoInput");
 #endif
+
 	//-----------------------
 	//draw Logo
 	//
-	if(FirstInitDone ==0) {
-		if(InputMain == INPUT_HDMIPC 
-		|| InputMain == INPUT_HDMITV 
-		|| InputMain == INPUT_LVDS) {
+	if (FirstInitDone == 0)
+	{
+		if(InputMain == INPUT_HDMIPC || InputMain == INPUT_HDMITV || InputMain == INPUT_LVDS) 
+		{
 			Printf("\n\rSkip InitLogo1()");
 		}
-		else {
+		else 
+		{
 			InitLogo1();
 			FirstInitDone =1;
 		}
 	}
+	
 	//
 	// Power Up FP(FrontPanel) LED.
 	// Now you can see somthing on your panel.
@@ -1032,18 +1057,21 @@ BYTE InitSystem(BYTE _fPowerUpBoot)
 	//-----------------------
 	//remove Logo
 	//
-	if(FirstInitDone ==1) {
+	if (FirstInitDone == 1) 
+	{
 		FirstInitDone = 2;
 		RemoveLogoWithWait(1);
-		if(Task_NoSignal_cmd == TASK_CMD_DONE)
+		if (Task_NoSignal_cmd == TASK_CMD_DONE)
 			FOsdWinEnable(0, OFF);	//win0, disable..
 	}	
+	
 	//------------------------
 	// setup eeprom effect
 	//------------------------
 	SetAspectHW(GetAspectModeEE());
 	value = EE_Read(EEP_FLIP);	//mirror
-	if(value) {
+	if (value)
+	{
 	    WriteTW88(REG201, ReadTW88(REG201) | 0x80);
 	}
 
@@ -1070,7 +1098,6 @@ BYTE InitSystem(BYTE _fPowerUpBoot)
 	// re calculate FOSD DE
 	FOsdSetDeValue();
 
-
 #ifdef SUPPORT_WATCHDOG
 	/* enable watchdog */
 	EnableWatchdog(1);
@@ -1078,8 +1105,6 @@ BYTE InitSystem(BYTE _fPowerUpBoot)
 
 	return 0;
 }
-
-
 
 //=============================================================================
 // Video TASK ROUTINES				                                               
@@ -1108,7 +1133,8 @@ void TaskNoSignal_setCmd(BYTE cmd)
 		tic_task = NOSIGNAL_TIME_INTERVAL;	//right now
 
 	Task_NoSignal_count = 0;
-}																				
+}
+
 //-----------------------------------------------------------------------------
 /**
 * get NoSignalTask status
