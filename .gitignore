@@ -9,6 +9,8 @@
 *.bin
 *.o
 *.lst
+*.obj
+*.hex
 
 *.IAB
 *.IAD
