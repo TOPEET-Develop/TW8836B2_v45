@@ -226,20 +226,23 @@ BYTE SpiFlash_wait_done(BYTE wait, BYTE unit)
 	BYTE i;
 	volatile BYTE vdata;
 
-	for(i=0; i<wait; i++) {
+	for (i=0; i<wait; i++)
+	{
 		vdata = ReadTW88(REG4C4);
-		if((vdata & 0x01)==0)
+		if ((vdata & 0x01) == 0)
 			break;
 		delay1ms((WORD)unit);
 	}
-	if(i==wait) {
-		Printf("DmaFail cmd:%02bx loop:%bd unit:%bd\n",
-			ReadTW88(REG4DA), wait, unit);
+	
+	if (i == wait)
+	{
+		Printf("DmaFail cmd:%02bx loop:%bd unit:%bd\n", ReadTW88(REG4DA), wait, unit);
+
 		return 1;
 	}
+	
 	return 0;
 }
-
 
 /*!
 * execute DMA command
@@ -358,7 +361,6 @@ BYTE SpiFlash_WriteEnable(void)
 	return ret;
 }
 
-
 /**
 * If you use SPICMD_EN4B, TW8836B will use 4Bytes address.
 */
@@ -366,16 +368,20 @@ BYTE SpiFlash_4B_DmaCmd(BYTE cmd)
 {
 	BYTE ret;
 
-	if     (cmd==SPICMD_EN4B) 	SpiFlash4ByteAddr = 1;
-	else if(cmd==SPICMD_EX4B) 	SpiFlash4ByteAddr = 0;
+	if
+		(cmd == SPICMD_EN4B)
+		SpiFlash4ByteAddr = 1;
+	else if (cmd == SPICMD_EX4B)
+		SpiFlash4ByteAddr = 0;
 	else
 		return 1; /* fail */
 
-	if(is_micron_256or512())
+	if (is_micron_256or512())
 		SpiFlash_WriteEnable();
 
 	SpiFlash_DmaCmd(cmd, DMA_TARGET_CHIP, 0, 0, DMA_OPT_NONE);
-	ret=SpiFlash_wait_done(10,10);
+	ret = SpiFlash_wait_done(10, 10);
+	
 	return ret;
 }
 
@@ -390,12 +396,14 @@ BYTE SpiFlash_4B_DmaCmd(BYTE cmd)
 */
 void SpiFlash_Set4BytesAddress(BYTE fOn)
 {	
-	if(fOn) {
-		if(SpiFlash4ByteAddr==0)
+	if (fOn)
+	{
+		if (SpiFlash4ByteAddr == 0)
 			SpiFlash_4B_DmaCmd(SPICMD_EN4B);
 	}
-	else { 
-		if(SpiFlash4ByteAddr)
+	else 
+	{ 
+		if (SpiFlash4ByteAddr)
 			SpiFlash_4B_DmaCmd(SPICMD_EX4B);
 	}
 }
@@ -907,21 +915,25 @@ BYTE is_micron_256or512(void)
  */
 BYTE check_spiflash_status_register(BYTE cmd, BYTE rsize, BYTE mask0, BYTE check0, BYTE mask1, BYTE check1)
 {
-	BYTE bTemp,bTemp1;
+	BYTE bTemp, bTemp1;
 
 	SpiFlash_DmaCmd(cmd, DMA_TARGET_CHIP, 0x4D0, (WORD)rsize, SPI_CMD_OPT_NONE);
 	SpiFlash_wait_done(2, 5);
 
 	/* read back status value from REG4D0 */
 	bTemp = ReadTW88(REG4D0);
+
 	/* mask and then check */
-	if((bTemp & mask0) != check0)
+	if ((bTemp & mask0) != check0)
 		return FALSE;
-	if(rsize==2) {
+
+	if (rsize == 2)
+	{
 		bTemp1 = ReadTW88(REG4D1);
-		if((bTemp1 & mask1) != check1)
+		if ((bTemp1 & mask1) != check1)
 			return FALSE;
 	}
+	
 	return TRUE;
 }
 
@@ -934,31 +946,38 @@ BYTE check_spiflash_status_register(BYTE cmd, BYTE rsize, BYTE mask0, BYTE check
 BYTE quadio_check_all(void)
 {
 	BYTE ret;
-	BYTE mid=spiflash_chip->mid;
+	BYTE mid = spiflash_chip->mid;
 
-	switch(mid) {
+	switch (mid)
+	{
 	case SPIFLASH_MID_EON:
 	case SPIFLASH_MID_MX:
 	case SPIFLASH_MID_ISSI:
-		return check_spiflash_status_register(SPICMD_RDSR,1,0x40,0x40,0,0);
+		return check_spiflash_status_register(SPICMD_RDSR, 1, 0x40, 0x40, 0, 0);
 
 	case SPIFLASH_MID_WB:
 	case SPIFLASH_MID_SPANSION:
+		return check_spiflash_status_register(SPICMD_RDSR2, 1, 0x02, 0x02, 0, 0);
+
 	case SPIFLASH_MID_GIGA:
-		return check_spiflash_status_register(SPICMD_RDSR2,1,0x02,0x02,0,0);
+		if (spiflash_chip->did1 == 0x20)	//GD25Q512MC
+			return check_spiflash_status_register(SPICMD_RDSR, 1, 0x40, 0x40, 0, 0);
+		else
+			return check_spiflash_status_register(SPICMD_RDSR2, 1, 0x02, 0x02, 0, 0);
 
 	case SPIFLASH_MID_MICRON:
 		/* check Non-volatile */
-		if(spiflash_chip->fast_mode ==5) 	//QuadIO need 6 dummy. clear RESET/HOLD
-			ret=check_spiflash_status_register(SPICMD_RDNVREG,2,0x10,0x00,0xF0,0x60);
+		if (spiflash_chip->fast_mode == 5) 	//QuadIO need 6 dummy. clear RESET/HOLD
+			ret = check_spiflash_status_register(SPICMD_RDNVREG,2,0x10,0x00,0xF0,0x60);
 		else								//QuadO need 8 dummy. clear RESET/HOLD
-			ret=check_spiflash_status_register(SPICMD_RDNVREG,2,0x10,0x00,0xF0,0x80);
+			ret = check_spiflash_status_register(SPICMD_RDNVREG,2,0x10,0x00,0xF0,0x80);
 		// if is_micron_512, use SPICMD_RDFREG,0x06.
 		//   (pol:low,bit:7.  try bit6)
-		if(spiflash_chip->did1==0x20)
+		if (spiflash_chip->did1 == 0x20)
 			/* read FlagStatus register. bit:6 Pol:Low */
-			SpiFlashSetupBusyCheck(SPICMD_RDFREG,0x06);
+			SpiFlashSetupBusyCheck(SPICMD_RDFREG, 0x06);
 		return ret;
+		
 	default:
 		return FALSE;
 	}	
@@ -966,21 +985,25 @@ BYTE quadio_check_all(void)
 
 BYTE quadio_enable_all(void)
 {
-	BYTE mid=spiflash_chip->mid;
+	BYTE mid = spiflash_chip->mid;
 	BYTE ret;
 
-	switch(mid) {
+	switch (mid)
+	{
 	case SPIFLASH_MID_EON:
 	case SPIFLASH_MID_MX:
 	case SPIFLASH_MID_ISSI:
 		SpiFlash_WriteEnable();
-		SPI_CmdBuffer[0]=0x40; 
+		SPI_CmdBuffer[0] = 0x40; 
 		SpiFlash_DmaCmd(SPICMD_WRSR, DMA_TARGET_CHIP | 0x01, 0, 0, SPI_CMD_OPT_BUSY);
-		SpiFlash_wait_done(10,10);
-		ret=SpiFlash_check_busy(10,10);
+		SpiFlash_wait_done(10, 10);
+		ret = SpiFlash_check_busy(10, 10);
 		break;
+
 	case SPIFLASH_MID_WB:
-		if(spiflash_chip->did1==0x18) { /* quadio_enable_winbond_64 */
+		if (spiflash_chip->did1 == 0x18)
+		{
+			/* quadio_enable_winbond_64 */
 			SpiFlash_WriteEnable();
 			SPI_CmdBuffer[0]=0x00;
 			SPI_CmdBuffer[1]=0x02;
@@ -988,7 +1011,8 @@ BYTE quadio_enable_all(void)
 			SpiFlash_wait_done(10,10);
 			ret=SpiFlash_check_busy(10,10);
 		}
-		else {
+		else
+		{
 			SpiFlash_WriteEnable();
 			SPI_CmdBuffer[0]=0x02;
 			SpiFlash_DmaCmd(SPICMD_WRSR2, DMA_TARGET_CHIP | 0x01, 0, 0, SPI_CMD_OPT_BUSY);
@@ -996,6 +1020,7 @@ BYTE quadio_enable_all(void)
 			ret=SpiFlash_check_busy(10,10);
 		}
 	   	break;
+
 	case SPIFLASH_MID_MICRON:
 #if 0 //micron_NonVolatile:
 		SpiFlash_WriteEnable();
@@ -1012,98 +1037,124 @@ BYTE quadio_enable_all(void)
 #else //micron_volatile
 		SpiFlash_WriteEnable();
 	
-		if(spiflash_chip->fast_mode ==5)
+		if (spiflash_chip->fast_mode == 5)
+		{
 			/* for QuadIO 1-4-4 mode with 6 dummy cycle */	
-			SPI_CmdBuffer[0]=0x6B;
+			SPI_CmdBuffer[0] = 0x6B;
+		}
 		else
+		{
 			/* for Quad and Fast with 8 dummy cycle. do not try Dual. */
-			SPI_CmdBuffer[0]=0x8B;	
+			SPI_CmdBuffer[0] = 0x8B;	
+		}
 		SpiFlash_DmaCmd(SPICMD_WDVREG, DMA_TARGET_CHIP | 0x01, 0, 0, SPI_CMD_OPT_BUSY);
-		SpiFlash_wait_done(10,10);
-		ret=SpiFlash_check_busy(10,10);
+		SpiFlash_wait_done(10, 10);
+		ret=SpiFlash_check_busy(10, 10);
 	
 		SpiFlash_WriteEnable();
 	
 		//Micron has different register meaning depend on thier chip.
 		//We used 0xCF, and tried 0xEF, and now, we are using 0xE7.
-		SPI_CmdBuffer[0]=0xE7;
+		SPI_CmdBuffer[0] = 0xE7;
 		SpiFlash_DmaCmd(SPICMD_WDVEREG, DMA_TARGET_CHIP | 0x01, 0, 0, SPI_CMD_OPT_BUSY);
-		SpiFlash_wait_done(10,10);
-		ret=SpiFlash_check_busy(10,10);
+		SpiFlash_wait_done(10, 10);
+		ret=SpiFlash_check_busy(10, 10);
 		break;
 #endif
+
 	case SPIFLASH_MID_SPANSION:
 		SpiFlash_WriteEnable();
 		SpiFlash_DmaCmd(SPICMD_RDSR, DMA_TARGET_CHIP, 0x4D0, 1, DMA_OPT_NONE);
-		SpiFlash_wait_done(10,10);
+		SpiFlash_wait_done(10, 10);
 		SPI_CmdBuffer[0] = ReadTW88(REG4D0);   /* Input Status Register-1 */
 
 		SpiFlash_WriteEnable();
         //Configuration Register 1 (CR1)   P58
-		SPI_CmdBuffer[1]=0x02; /* Input Configuration Register */
+		SPI_CmdBuffer[1] = 0x02; /* Input Configuration Register */
 		SpiFlash_DmaCmd(SPICMD_WRSR, DMA_TARGET_CHIP | 0x02, 0, 0, SPI_CMD_OPT_BUSY);
-		SpiFlash_wait_done(10,10);
-		ret=SpiFlash_check_busy(10,10);
+		SpiFlash_wait_done(10, 10);
+		ret=SpiFlash_check_busy(10, 10);
 		break;
+
 	case SPIFLASH_MID_GIGA:
-		if(spiflash_chip->did1==0x15
-		|| spiflash_chip->did1==0x16) {	//giga_small
-			BYTE status0,status1;
+		if (spiflash_chip->did1==0x15 || spiflash_chip->did1==0x16)
+		{	
+			//giga_small
+			BYTE status0, status1;
 
 			SpiFlash_DmaCmd(SPICMD_RDSR, DMA_TARGET_CHIP, 0x4D0, 1, DMA_OPT_NONE);
-			SpiFlash_wait_done(10,10);
+			SpiFlash_wait_done(10, 10);
 			status0 = ReadTW88(REG4D0);
 
 			SpiFlash_DmaCmd(SPICMD_RDSR2, DMA_TARGET_CHIP, 0x4D0, 1, DMA_OPT_NONE);
-			SpiFlash_wait_done(10,10);
+			SpiFlash_wait_done(10, 10);
 			status1 = ReadTW88(REG4D0);
 		
 			SpiFlash_WriteEnable();
 
-			SPI_CmdBuffer[0]=status0;
-			SPI_CmdBuffer[1]=status1 | 0x02;
+			SPI_CmdBuffer[0] = status0;
+			SPI_CmdBuffer[1] = status1 | 0x02;
 			SpiFlash_DmaCmd(SPICMD_WRSR, DMA_TARGET_CHIP | 0x02, 0, 0, SPI_CMD_OPT_BUSY);
-			SpiFlash_wait_done(10,10);
-			ret=SpiFlash_check_busy(10,10);
+			SpiFlash_wait_done(10, 10);
+			ret = SpiFlash_check_busy(10, 10);
 			break;
 		}
-		else {
+		else if (spiflash_chip->did1==0x17 || spiflash_chip->did1==0x18)	//GD25Q128C/GD25Q64C
+		{
 			BYTE status;
 
 			SpiFlash_DmaCmd(SPICMD_RDSR2, DMA_TARGET_CHIP, 0x4D0, 1, DMA_OPT_NONE);
-			SpiFlash_wait_done(10,10);
+			SpiFlash_wait_done(10, 10);
 			status = ReadTW88(REG4D0);
 
 			SpiFlash_WriteEnable();
 
 			SPI_CmdBuffer[0]= status | 0x02;
 			SpiFlash_DmaCmd(SPICMD_WRSR2, DMA_TARGET_CHIP | 0x01, 0, 0, SPI_CMD_OPT_BUSY);
-			SpiFlash_wait_done(10,10);
-			ret=SpiFlash_check_busy(10,10);
+			SpiFlash_wait_done(10, 10);
+			ret = SpiFlash_check_busy(10, 10);
 			break;
 		}
+		else if (spiflash_chip->did1==0x19 || spiflash_chip->did1==0x20)	//GD25Q512MC/GD25Q256C
+		{
+			BYTE status;
+
+			SpiFlash_DmaCmd(SPICMD_RDSR, DMA_TARGET_CHIP, 0x4D0, 1, DMA_OPT_NONE);
+			SpiFlash_wait_done(10, 10);
+			status = ReadTW88(REG4D0);
+
+			SpiFlash_WriteEnable();
+
+			SPI_CmdBuffer[0]= status | 0x40;
+			SpiFlash_DmaCmd(SPICMD_WRSR, DMA_TARGET_CHIP | 0x01, 0, 0, SPI_CMD_OPT_BUSY);
+			SpiFlash_wait_done(10, 10);
+			ret = SpiFlash_check_busy(10, 10);
+			break;		
+		}
 	}
+
 	return 0;
 }
 
 BYTE check_4b_all(void)
 {
-	BYTE mid=spiflash_chip->mid;
+	BYTE mid = spiflash_chip->mid;
 
-	switch(mid) {
+	switch (mid)
+	{
 	case SPIFLASH_MID_MX:
-		return check_spiflash_status_register(SPICMD_RDCR,1,0x20,0x20,0,0);
+		return check_spiflash_status_register(SPICMD_RDCR, 1, 0x20, 0x20, 0, 0);
 	case SPIFLASH_MID_MICRON:
-		return check_spiflash_status_register(SPICMD_RDFREG,1,0x01,0x01,0,0);
+		return check_spiflash_status_register(SPICMD_RDFREG, 1, 0x01, 0x01, 0, 0);
 	case SPIFLASH_MID_WB:
-		return check_spiflash_status_register(SPICMD_RDSR3,1,0x01,0x01,0,0);
+		return check_spiflash_status_register(SPICMD_RDSR3, 1, 0x01, 0x01, 0, 0);
 	case SPIFLASH_MID_GIGA:	/* I have only 128, so I don't know */
 	case SPIFLASH_MID_ISSI:	/* I have only 128, so I don't know */
 		return FALSE;
 	case SPIFLASH_MID_EON:
 	case SPIFLASH_MID_SPANSION:
 	default:
-		return check_spiflash_status_register(SPICMD_RDINFO,1,0x04,0x04,0,0);			
+		return check_spiflash_status_register(SPICMD_RDINFO, 1, 0x04, 0x04, 0, 0);			
 	}
 }
 
@@ -1118,7 +1169,7 @@ struct SPIFLASH_DIMEMSION *find_spiflash_chip(void)
 	BYTE ret;
 	
 	SpiFlash_DmaCmd(SPICMD_RDID,DMA_TARGET_CHIP, 0x4D0, 3, DMA_OPT_NONE);
-	ret=SpiFlash_wait_done(10,10);
+	ret = SpiFlash_wait_done(10, 10);
 	if (ret) 
 	{
 		Puts(" SPICMD_RDID fail");
@@ -1132,7 +1183,7 @@ struct SPIFLASH_DIMEMSION *find_spiflash_chip(void)
 	mid  = ReadTW88(REG4D0);	//manufacturer id
 	did0 = ReadTW88(REG4D1);	//device id0
 	did1 = ReadTW88(REG4D2);	//device id1
-	Printf(" %02bx:%02bx:%02bx", mid,did0,did1);
+	Printf(" %02bx:%02bx:%02bx", mid, did0, did1);
 
 	spiflash1_chip = spiflash_chip_table;	
 	while (spiflash1_chip->mid)
@@ -1163,6 +1214,7 @@ BYTE init_spiflash_chip(void)
 	BYTE ret;
 
 	Puts("SpiFlash ");
+	
 	spiflash_chip = find_spiflash_chip();
 	if (spiflash_chip == NULL)
 	{
@@ -1188,7 +1240,7 @@ BYTE init_spiflash_chip(void)
 	{
         /* Quad did not enabled, enable Quad */
 		Puts(" EnQuad");
-		ret=quadio_enable_all();
+		ret = quadio_enable_all();
 		Puts(".");
 	}
 
