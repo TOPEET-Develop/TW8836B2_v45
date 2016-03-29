@@ -887,7 +887,6 @@ BYTE I2CSPI_download_Sector(uint32_t src_addr, uint32_t dest_addr, uint32_t uplo
     return 0; /* success */
 }
 
-
 BYTE I2CSPI_download_main(uint32_t src_addr, uint32_t dest_addr, uint32_t download_len)
 {
 	DWORD remain;
@@ -901,7 +900,8 @@ BYTE I2CSPI_download_main(uint32_t src_addr, uint32_t dest_addr, uint32_t downlo
     I2C_delay_base=0;
 
 	/* check align */
-	if(dest_addr & 0x0FFF) {
+	if (dest_addr & 0x0FFF)
+	{
 		Printf("dest_addr is not 4KB aligned");
         I2C_delay_base = old_I2C_delay_base;
 		return 1;
@@ -911,7 +911,8 @@ BYTE I2CSPI_download_main(uint32_t src_addr, uint32_t dest_addr, uint32_t downlo
     Puts("\nCheck TW8836 ID");
 	WriteI2C_8A(0xFF,0x00);	
 	bTemp = ReadI2C_8A(0x00);
-	if(bTemp != 0x36) {
+	if (bTemp != 0x36)
+	{
 		Printf("=> No TW8836 ID:%02bx", bTemp);
 		I2C_delay_base = old_I2C_delay_base;
         return 1;
@@ -920,17 +921,20 @@ BYTE I2CSPI_download_main(uint32_t src_addr, uint32_t dest_addr, uint32_t downlo
     /* check & disable SpiOSD */
 	WriteI2C_8A(0xFF,0x04);	
 	bTemp = ReadI2C_8A(0x00);
-	if(bTemp & 0x04) {
+	if (bTemp & 0x04)
+	{
 		Printf("\nDisable SpiOSD");
         WriteI2C_8A(0x00, bTemp & ~0x04);
         delay1ms(18);
         //check
     	bTemp = ReadI2C_8A(0x00);
-    	if(bTemp & 0x04) {
+    	if (bTemp & 0x04)
+		{
     		Printf("\nDisable SpiOSD");
             WriteI2C_8A(0x00, bTemp & ~0x04);
         	bTemp = ReadI2C_8A(0x00);
-        	if(bTemp & 0x04) {
+        	if (bTemp & 0x04)
+			{
                 Puts("=>Fail");
                 return 1;
             }
@@ -940,38 +944,43 @@ BYTE I2CSPI_download_main(uint32_t src_addr, uint32_t dest_addr, uint32_t downlo
     /* check & disable xmem access */
 	WriteI2C_8A(0xFF,0x04);
 	bTemp = ReadI2C_8A(0xC2);
-	if(bTemp & 0x01) {
+	if (bTemp & 0x01)
+	{
 		Puts("\nDisable XMEM access");
 		WriteI2C_8A(0xC2, 0x00);
 	}
 
     /* check DMA */
-	WriteI2C_8A(0xFF,0x04);
+	WriteI2C_8A(0xFF, 0x04);
 	bTemp = ReadI2C_8A(0xF4);
-	if(bTemp & 0x01) {
+	if (bTemp & 0x01)
+	{
 		Puts("\nI2CSPI DMA was busy");
         /* you need HW reset */
         Puts("\nLV reset");
         I2CSPI_LV_reset();
         delay1ms(500);
-    	WriteI2C_8A(0xFF,0x04);
+    	WriteI2C_8A(0xFF, 0x04);
     	bTemp = ReadI2C_8A(0xF4);
-    	if(bTemp & 0x01) {
+    	if (bTemp & 0x01)
+		{
     		Puts("\nI2CSPI DMA still busy");
             return 1;
         }
 	}
-	WriteI2C_8A(0xFF,0x04);
+	WriteI2C_8A(0xFF, 0x04);
 	bTemp = ReadI2C_8A(0xC4);
-	if(bTemp & 0x01) {
+	if (bTemp & 0x01)
+	{
 		Puts("\nSPI DMA was busy");
         /* you need HW reset */
         Puts("\nLV reset");
         I2CSPI_LV_reset();
         delay1ms(500);
-    	WriteI2C_8A(0xFF,0x04);
+    	WriteI2C_8A(0xFF, 0x04);
     	bTemp = ReadI2C_8A(0xC4);
-    	if(bTemp & 0x01) {
+    	if (bTemp & 0x01)
+		{
     		Puts("\nSPI DMA still busy");
             return 1;
         }
@@ -979,17 +988,20 @@ BYTE I2CSPI_download_main(uint32_t src_addr, uint32_t dest_addr, uint32_t downlo
 
     /* read SPIFLASH ID */
     ret = I2CSPI_ReadId_to_chipreg();
-	if(ret) {
+	if (ret)
+	{
 		Puts("\nJEDEC failed");
 		I2C_delay_base = old_I2C_delay_base;
         return 1;
 	}
+	
     /* read ID */
 	WriteI2C_8A(0xFF,0x04);
     I2CSPI_mid = ReadI2C_8A(REG4D0);
     I2CSPI_size = ReadI2C_8A(REG4D2);
 	Printf("\nJEDEC %02bx %02bx %02bx ", I2CSPI_mid, ReadI2C_8A(REG4D1), I2CSPI_size);
-    switch(I2CSPI_mid) {
+    switch (I2CSPI_mid)
+	{
     case 0:
     case 0xFF:
         /* something wrong. do not try */
@@ -1016,12 +1028,15 @@ BYTE I2CSPI_download_main(uint32_t src_addr, uint32_t dest_addr, uint32_t downlo
         I2CSPI_size = 0; /* make it as an unknow size */
         break;
     }
-    /* is it need 4Byte address mode ? */
+
+	/* is it need 4Byte address mode ? */
     need_4b=0;
 	dest_spi_addr = dest_addr;
     dest_spi_addr += download_len;
-    if(dest_spi_addr > 0x1000000) {
-        if(I2CSPI_size <= 0x18) {
+    if (dest_spi_addr > 0x1000000)
+	{
+        if (I2CSPI_size <= 0x18)
+		{
             Puts("\nYou need Bigger chip");
             I2C_delay_base = old_I2C_delay_base;
             return 1;
@@ -1034,18 +1049,20 @@ BYTE I2CSPI_download_main(uint32_t src_addr, uint32_t dest_addr, uint32_t downlo
 	I2CSPI_mcu_halt_rerun(1);
 
     /* check MCU */
-	WriteI2C_8A(0xFF,0x04);
+	WriteI2C_8A(0xFF, 0x04);
 	bTemp = ReadI2C_8A(0xC4);
-	if(bTemp & 0x80) {
+	if (bTemp & 0x80)
+	{
 		Puts("\nMCU is running");
         I2C_delay_base = old_I2C_delay_base;
         return 1;
 	}
 
     /* move to 27MHz */
-	WriteI2C_8A(0xFF,0x04);
+	WriteI2C_8A(0xFF, 0x04);
 	bTemp = ReadI2C_8A(0xE1);
-	if(bTemp & 0x30) {
+	if (bTemp & 0x30)
+	{
 		Puts("\n27MHz");
 		WriteI2C_8A(0xE1, bTemp & ~0x30);
 	}
@@ -1053,20 +1070,25 @@ BYTE I2CSPI_download_main(uint32_t src_addr, uint32_t dest_addr, uint32_t downlo
 
     /* check & change 4Byte addr mode */
     I2CSPI_4B_mode = 0;
-    if(I2CSPI_size > 0x18) {
-        if(need_4b) {
+    if (I2CSPI_size > 0x18)
+	{
+        if (need_4b)
+		{
             Puts("\nEn4B");
-            ret=I2cSpiFlash_4B_DmaCmd(SPICMD_EN4B);
-            if(ret) {
+            ret = I2cSpiFlash_4B_DmaCmd(SPICMD_EN4B);
+            if (ret)
+			{
                 Puts("\nFail En4B");
                 I2C_delay_base = old_I2C_delay_base;
                 return 1;
             }   
         }
-        else {
+        else
+		{
             Puts("\nEx4B");
-            ret=I2cSpiFlash_4B_DmaCmd(SPICMD_EX4B);
-            if(ret) {
+            ret = I2cSpiFlash_4B_DmaCmd(SPICMD_EX4B);
+            if (ret)
+			{
                 Puts("\nFail Ex4B");
                 I2C_delay_base = old_I2C_delay_base;
                 return 1;
@@ -1080,14 +1102,19 @@ BYTE I2CSPI_download_main(uint32_t src_addr, uint32_t dest_addr, uint32_t downlo
 	remain = download_len;
 
     /* pre-sector */
-	while(dest_spi_addr & 0x0000F000) {
-		if(remain >= FLASH_SECTOR_SIZE) data_len=FLASH_SECTOR_SIZE;
-        else                            data_len=remain;
-        ret=I2CSPI_download_Sector(src_spi_addr, dest_spi_addr, data_len);
-        if(ret) {
+	while (dest_spi_addr & 0x0000F000)
+	{
+		if (remain >= FLASH_SECTOR_SIZE)
+			data_len=FLASH_SECTOR_SIZE;
+        else
+			data_len=remain;
+        ret = I2CSPI_download_Sector(src_spi_addr, dest_spi_addr, data_len);
+        if (ret)
+		{
             Puts("\nretry");
-            ret=I2CSPI_download_Sector(src_spi_addr, dest_spi_addr, data_len);
-            if(ret) {
+            ret = I2CSPI_download_Sector(src_spi_addr, dest_spi_addr, data_len);
+            if (ret)
+			{
                 I2C_delay_base = old_I2C_delay_base;
                 return 1;
             }
@@ -1096,15 +1123,21 @@ BYTE I2CSPI_download_main(uint32_t src_addr, uint32_t dest_addr, uint32_t downlo
 		src_spi_addr  += data_len;
 		dest_spi_addr += data_len;
     }
+	
     /* block */
-	while(remain > (FLASH_BLOCK_SIZE - FLASH_SECTOR_SIZE)) {
-		if(remain >= FLASH_BLOCK_SIZE) data_len=FLASH_BLOCK_SIZE;
-        else                           data_len=remain;
-        ret=I2CSPI_download_Block(src_spi_addr, dest_spi_addr, data_len);
-        if(ret) {
+	while (remain > (FLASH_BLOCK_SIZE - FLASH_SECTOR_SIZE))
+	{
+		if (remain >= FLASH_BLOCK_SIZE)
+			data_len = FLASH_BLOCK_SIZE;
+        else
+			data_len=remain;
+        ret = I2CSPI_download_Block(src_spi_addr, dest_spi_addr, data_len);
+        if (ret)
+		{
             Puts("\nretry");
-            ret=I2CSPI_download_Block(src_spi_addr, dest_spi_addr, data_len);
-            if(ret) {
+            ret = I2CSPI_download_Block(src_spi_addr, dest_spi_addr, data_len);
+            if (ret)
+			{
                 I2C_delay_base = old_I2C_delay_base;
                 return 1;
             }
@@ -1113,15 +1146,21 @@ BYTE I2CSPI_download_main(uint32_t src_addr, uint32_t dest_addr, uint32_t downlo
 		src_spi_addr  += data_len;
 		dest_spi_addr += data_len;
     }
+	
     /* post-sector*/
-	while(remain) {
-		if(remain >= FLASH_SECTOR_SIZE) data_len=FLASH_SECTOR_SIZE;
-        else                            data_len=remain;
-        ret=I2CSPI_download_Sector(src_spi_addr, dest_spi_addr, data_len);
-        if(ret) {
+	while (remain)
+	{
+		if (remain >= FLASH_SECTOR_SIZE)
+			data_len=FLASH_SECTOR_SIZE;
+        else
+			data_len=remain;
+        ret = I2CSPI_download_Sector(src_spi_addr, dest_spi_addr, data_len);
+        if (ret)
+		{
             Puts("\nretry");
-            ret=I2CSPI_download_Sector(src_spi_addr, dest_spi_addr, data_len);
-            if(ret) {
+            ret = I2CSPI_download_Sector(src_spi_addr, dest_spi_addr, data_len);
+            if (ret)
+			{
                 I2C_delay_base = old_I2C_delay_base;
                 return 1;
             }
@@ -1137,7 +1176,6 @@ BYTE I2CSPI_download_main(uint32_t src_addr, uint32_t dest_addr, uint32_t downlo
     I2C_delay_base = old_I2C_delay_base;
     return 0;
 }
-
 
 BYTE I2CSPI_xcopy_main(uint32_t src_addr, uint32_t download_len)
 {
