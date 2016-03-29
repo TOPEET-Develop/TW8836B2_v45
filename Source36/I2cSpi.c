@@ -333,42 +333,49 @@ BYTE I2CSPI_IsCmdAccepted(BYTE option, BYTE loop, BYTE delay, BYTE debug)
 	volatile BYTE vdata;
 	volatile BYTE vpage;
 
-    if(debug) {
+    if (debug)
+	{
 		Puts("\n");
 
-    	WriteI2C_8A(0xFF,0x04);	
-    	for(i=0; i < loop; i++) {
+    	WriteI2C_8A(0xFF, 0x04);	
+    	for (i=0; i < loop; i++)
+		{
 		    vpage = ReadI2C_8A(0xFF);
             vdata = ReadI2C_8A(DMAREG_4F4);
-            Printf("%02bx:%02bx ",vpage,vdata);
-            if(vpage==0x04) {
-        		if((vdata & 0x7F) == option) {
-                    Printf("CMD:%02bX i:%bd delay:%bd", 
-                        ReadI2C_8A(DMAREG_4FA),i,delay);
+            Printf("%02bx:%02bx ", vpage, vdata);
+            if (vpage == 0x04)
+			{
+        		if ((vdata & 0x7F) == option)
+				{
+                    Printf("CMD:%02bX i:%bd delay:%bd", ReadI2C_8A(DMAREG_4FA), i, delay);
     			    return i;
                 }
             }
-    		if(delay)
+			
+    		if (delay)
     			delay1ms((WORD)delay);
     	}
-        Printf(" CMD:%02bX fail loop%bd delay:%bd\n", 
-            ReadI2C_8A(DMAREG_4FA),i,delay);
+        Printf(" CMD:%02bX fail loop%bd delay:%bd\n", ReadI2C_8A(DMAREG_4FA), i, delay);
     }
-    else {
-    	WriteI2C_8A(0xFF,0x04);	
-    	for(i=0; i < loop; i++) {
+    else
+	{
+    	WriteI2C_8A(0xFF, 0x04);	
+    	for (i = 0; i < loop; i++)
+		{
     		vdata = ReadI2C_8A(0xFF);
-            if(vdata==0x04) {
+            if (vdata == 0x04)
+			{
                 vdata = ReadI2C_8A(DMAREG_4F4);
-        		if((vdata & 0x7F) == option)
+        		if ((vdata & 0x7F) == option)
         			return i;
             }
-    		if(delay)
+			
+    		if (delay)
     			delay1ms((WORD)delay);
 	    }
-        Printf(" CMD:%02bX fail loop%bd delay:%bd\n", 
-            ReadI2C_8A(DMAREG_4FA),i,delay);
+        Printf(" CMD:%02bX fail loop%bd delay:%bd\n", ReadI2C_8A(DMAREG_4FA), i, delay);
     }
+	
 	return loop;	//fail:busy
 }
 
