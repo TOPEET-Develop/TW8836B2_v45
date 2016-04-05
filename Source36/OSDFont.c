@@ -261,23 +261,33 @@ void FOsdFontSetFifo(BYTE fOn)
 /**
 * set FONT Width & Height
 *
-*	r300[4]		0: CharWidth 12. 1:CharWidth 18.
-*	r350[4:0]	(Font OSD Char Height ) >> 1
-*	r351[6:0]	Sub-Font Total Count. used bytes for one font. if 12x18, use 27.
+*	r300[4]		0: CharWidth 12. 1:CharWidth 16.
+*	r390[4:0]	(Font OSD Char Height ) >> 1
+*	r391[6:0]	Sub-Font Total Count. used bytes for one font. if 12x18, use 27.
 */
 void FOsdSetFontWidthHeight(BYTE width, BYTE height)
 {
 	BYTE value;
 
-	value = ReadTW88(REG300);	
-	if(width==16)	value |= 0x10;	   				//width 16
-	else			value &= 0xEF;					//   or 12
-	WriteTW88(REG300, value ); 
+	value = ReadTW88(REG300);
 
-	WriteTW88(REG_FOSD_CHEIGHT, height >> 1 ); 					//Font height(2~32)
+
+	if (width == 16)
+		value |= 0x10;	   				//width 16
+	else if (width == 12)
+		value &= ~0x10;					//   or 12
+	else
+	{
+		Printf("\r\nFont Width is wrong!")
+		
+		return;
+	}
+	
+	WriteTW88(REG300, value); 
+
+	WriteTW88(REG_FOSD_CHEIGHT, height >> 1); 					//Font height(2~32)
 	WriteTW88(REG_FOSD_MUL_CON, (width >> 2) * (height >> 1));	//sub-font total count.
 }
-
 
 //-------------------------------------------------------------------
 /**
