@@ -271,14 +271,13 @@ void FOsdSetFontWidthHeight(BYTE width, BYTE height)
 
 	value = ReadTW88(REG300);
 
-
 	if (width == 16)
 		value |= 0x10;	   				//width 16
 	else if (width == 12)
 		value &= ~0x10;					//   or 12
 	else
 	{
-		Printf("\r\nFont Width is wrong!")
+		Printf("\r\nFont Width is wrong!");
 		
 		return;
 	}

@@ -256,13 +256,14 @@ void TestUpper256Char(void)
 
 	fosd = &temp_fosd_menu_item;
 	fosd->win = 0;
+	
 	//init DE
 	FOsdSetDeValue();
 
 	FOsdWinInit(fosd->win);
 
 	WaitVBlank(1);
-	FOsdWinEnable(fosd->win,OFF);	// disable
+	FOsdWinEnable(fosd->win, OFF);	// disable
 
 	InitFontRamByNum(FONT_NUM_DEF12X18, 0);	//InitFontRam(0, &default_font,"def");
     //DownloadExtFont(0xA0, default_font.loc, default_font.size, 320,320,320);	//now, we have 160+160 fonts.
@@ -270,31 +271,35 @@ void TestUpper256Char(void)
 	//FOsdInitBpp3AlphaTable();
 	//FOsdInitBpp3AlphaTable();
 	//FOsdWinAlphaPixel(winno,1,0);		//bgcolor 1 alpha 0
+
 #ifdef SUPPORT_UDFONT
-FOsdDownloadUDFontBySerial();
+	FOsdDownloadUDFontBySerial();
 #endif
 
-	FOsdWinAlphaPixel(fosd->win,bgColor,4);		//bgcolor 1 alpha 0
+	FOsdWinAlphaPixel(fosd->win, bgColor, 4);		//bgcolor 1 alpha 0
 
-	FOsdWinScreenXY(fosd->win, 0,0);		//0x20, 0x10);		//max 512 = 32x16
+	FOsdWinScreenXY(fosd->win, 0, 0);		//0x20, 0x10);		//max 512 = 32x16
 	FOsdWinScreenWH(fosd->win, columns, lines);		//0x20, 0x10);		//max 512 = 32x16
  	FOsdWinZoom(fosd->win, 1, 0);						//fosd->zoom>>4, fosd->zoom & 0x0F);
 
 	//set OsdRam.
-	WriteTW88(REG304, 0x0c ); // Auto Inc.
+	WriteTW88(REG304, 0x0c); // Auto Inc.
 
 	FOsdRamSetAddrAttr(0, (bgColor << 4) | fgColor);
 
-	for(i=0; i < 0x10 /*lines */; i++) {
-		for(j=0; j < columns; j++) {
+	for (i = 0; i < 0x10 /*lines */; i++)
+	{
+		for (j = 0; j < columns; j++)
+		{
 			index = i*columns+j;
 
 			WriteTW88(REG307, (BYTE)index);
 		}
 	}
+	
 	//RTL BUG: If auto inc from 0 to 0xFF, 0xFE and 0xFF position not working.
 	//WaitVBlank(1);
-	bgColor=4;	//red
+	bgColor = 4;	//red
 	WriteTW88(REG304, 0x0c ); // Auto Inc.
 	FOsdRamSetAddrAttr(0xFD, (bgColor << 4) | fgColor);
 
@@ -304,31 +309,31 @@ FOsdDownloadUDFontBySerial();
 	WriteTW88(REG307, 0xFE);
 	WriteTW88(REG307, 0xFF);
 
-	bgColor=2;	//lime
+	bgColor = 2;	//lime
 
 	//working 
 	WriteTW88(REG304, ReadTW88(REG304) | 0x20);	//set UP256 before update attr.
 
 	FOsdRamSetAddrAttr(0x100, (bgColor << 4) | fgColor);
-	for(i=0x10; i < lines; i++) {
-		for(j=0; j < columns; j++) {
+	for (i = 0x10; i < lines; i++)
+	{
+		for (j = 0; j < columns; j++)
+		{
 			index = i*columns+j + start_offset;
 
 			//if(index >= (max+start_offset)) break;
-			if(index >= max)
+			if (index >= max)
 				break;
 			//if(index >= 256)
 			//	WriteTW88(REG304, ReadTW88(REG304) | 0x20);	 
 			WriteTW88(REG307, (BYTE)index);
 		}
 	}
-
-
 	
 	WriteTW88(REG304, ReadTW88(REG304) & 0xDF);		//default: lower 256 char.		
 	WriteTW88(REG304, ReadTW88(REG304) & 0xFE);		//OsdRam access mode
 	
-	FOsdWinEnable(fosd->win,ON);	//win0 enable}
+	FOsdWinEnable(fosd->win, ON);	//win0 enable}
 }
 
 //description

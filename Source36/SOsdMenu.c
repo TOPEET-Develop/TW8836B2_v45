@@ -313,12 +313,14 @@ void push_menu_stack_level(void)
 	menu_level++;
 	menu_lock_scroll = 0;	//clear. If menu was a scroll, I want to scroll the menu.
 }
+
 void pop_menu_stack_level(void)
 {
 	menu_level--;
     curr_menu = menu_level_stack[menu_level];
 	menu_lock_scroll = 0;	//clear
 }
+
 /**
 * desc: get menu level.
 *	To solve the Bank issue.
@@ -1548,7 +1550,6 @@ BYTE MenuKeyInput_position_page(BYTE key)
 	return key;
 }
 
-
 //-----------------------------------------------------------------------------
 /**
 * Function
@@ -1560,7 +1561,8 @@ BYTE MenuKeyInput_position_page(BYTE key)
 void MenuKeyInput(BYTE key)
 {
 #ifdef DEBUG_MENU
-	switch(key) {
+	switch (key)
+	{
 	case NAVI_KEY_ENTER: 	dMenuPrintf("\n\rNAVI_KEY_ENTER");	break;
 	case NAVI_KEY_UP: 		dMenuPrintf("\n\rNAVI_KEY_UP");		break;
 	case NAVI_KEY_DOWN: 	dMenuPrintf("\n\rNAVI_KEY_DOWN");		break;
@@ -1568,8 +1570,10 @@ void MenuKeyInput(BYTE key)
 	case NAVI_KEY_RIGHT: 	dMenuPrintf("\n\rNAVI_KEY_RIGHT");	break;
 	default: 				dMenuPrintf("\n\rNAVI_KEY_knonwn:%02bx",key);	break;
 	}
-    dPrintCurrMenu();
-    dPrintf(" curr_menu type:%bd focus:%bd select:%bd item_start:%bd item_total:%bd", 
+
+	dPrintCurrMenu();
+
+	dPrintf(" curr_menu type:%bd focus:%bd select:%bd item_start:%bd item_total:%bd", 
         curr_menu->type,
         curr_menu->focus, 
         curr_menu->select,
@@ -1580,20 +1584,21 @@ void MenuKeyInput(BYTE key)
 	//
 	//special
 	// eat the key or return the same key.
-	if(curr_menu==&menu_slider_page)
+	if (curr_menu == &menu_slider_page)
 		key = MenuKeyInput_slider_page(key);
-	else if(curr_menu==&menu_slider3_page)
+	else if (curr_menu == &menu_slider3_page)
 		key =MenuKeyInput_slider3_page(key);
-	else if(curr_menu==&menu_position_page)
+	else if (curr_menu == &menu_position_page)
 		key = MenuKeyInput_position_page(key);
-	else if(curr_menu==&menu_input_page || curr_menu==&menu_system_page)
+	else if (curr_menu == &menu_input_page || curr_menu == &menu_system_page)
 		key = MenuKeyInput_input_page(key);
-	else if(curr_menu==&menu_main_page) {
+	else if (curr_menu == &menu_main_page)
+	{
 		key = MenuKeyInput_main_page(key);
 	}
 
-
-	switch(key) {
+	switch (key)
+	{
 	case NAVI_KEY_ENTER:
 		curr_menu->items[curr_menu->focus].p();
 		//NOTE:DO NOT USE curr_menu, it will be updated.
@@ -1637,6 +1642,7 @@ void MenuKeyInput(BYTE key)
 	//	MenuDrawCurrImage(0,curr_menu->focus);
 	//}
 }
+
 /**
 * description
 *	check input and return the selected item number
@@ -4146,11 +4152,12 @@ void proc_input_setting(void)
 	push_menu_stack_level();
 
 	MenuInputMain = GetInputMain();
-	if(MenuInputMain==INPUT_PC)
+	
+	if (MenuInputMain == INPUT_PC)
 		curr_menu = &menu_apc_list_page;	//PC ( Analog RGB )  //BK160209
-	else if(MenuInputMain==INPUT_DVI)
+	else if (MenuInputMain == INPUT_DVI)
 		curr_menu = &menu_rgb_list_page; 	//DVI  //BK160209
-	else if(MenuInputMain==INPUT_HDMIPC || MenuInputMain==INPUT_HDMITV) 
+	else if (MenuInputMain == INPUT_HDMIPC || MenuInputMain == INPUT_HDMITV) 
 		curr_menu = &menu_hdmi_list_page; 	//HDMI   //BK160209
 	else 
 		curr_menu = &menu_yuv_list_page;	//CVBS & SVideo	& YPBPR	& BT656     //BK160209
@@ -4233,6 +4240,7 @@ void proc_system_display(void)
 	curr_menu_watchdog_focus = curr_menu->focus;
     curr_menu->items[0].p();
 }	
+
 void proc_system_btooth(void)
 {
 	curr_menu->select = MENU_SYSTEM_BTOOTH;
@@ -4245,6 +4253,7 @@ void proc_system_btooth(void)
 	curr_menu_watchdog_focus = curr_menu->focus;
     curr_menu->items[0].p();
 }	
+
 void proc_system_restore(void)
 {
 	curr_menu->select = MENU_SYSTEM_RESTORE;
@@ -4256,6 +4265,7 @@ void proc_system_restore(void)
 	curr_menu_watchdog_focus = curr_menu->focus;
     curr_menu->items[0].p();
 }
+
 void proc_system_info(void)
 {
 	BYTE str_buff[10];
@@ -4358,38 +4368,42 @@ void proc_phone_digit(BYTE ch, BYTE fCursor)
 	menu_fitem_info_t *text_info = curr_menu->texts;
 	//text_info += index;
 
-
-	if(IsDigit(ch)) {
+	if (IsDigit(ch))
+	{
 		palette = text_info->BPP3_palette;
 		FOsdRamSetAddrAttr(text_info->osdram+phone_start,palette >> 2);
 		WriteTW88(REG307, (ch-0x30) * 3 + BPP3DIGIT_START);
 		phone_start++;	
 	}
-	else {
+	else
+	{
 		palette = text_info->BPP1Color;
-		if(ch==0x0B) {	//backspace
+		if (ch == 0x0B)
+		{
+			//backspace
 			ch = 0x20;	//space
 			FOsdRamSetAddrAttr(text_info->osdram+phone_start,text_info->BPP1Color);	//remove cursor
 			WriteTW88(REG307, ch);
-			if(phone_start)
+			if (phone_start)
 				phone_start--;
 			FOsdRamSetAddrAttr(text_info->osdram+phone_start,text_info->BPP1Color);	//remove char
 			WriteTW88(REG307, ch);
 		}
-		else {
+		else
+		{
 			FOsdRamSetAddrAttr(text_info->osdram+phone_start,text_info->BPP1Color);
 			WriteTW88(REG307, ch);
 			phone_start++;	
 		}
 	}
-	if(fCursor)
+	
+	if (fCursor)
 		proc_phone_cursor(phone_start);
 
-
-	if(phone_start >= 30)
+	if (phone_start >= 30)
 		phone_start = 30;
-
 }
+
 void proc_phone_string(BYTE *str)
 {
 	BYTE palette;
@@ -4410,12 +4424,12 @@ void proc_phone_string(BYTE *str)
 		WriteTW88(REG307, 0);	//space
 }
 
-
 void proc_phone_1(void) 
 {
 	proc_phone_digit('1',1);
 	MenuDrawCurrImage(0, curr_menu->focus);	
 }
+
 void proc_phone_2(void) 
 {
 	proc_phone_digit('2',1);

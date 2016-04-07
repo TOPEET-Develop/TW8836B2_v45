@@ -1290,7 +1290,7 @@ BYTE IsBackDrivePortOn(void)
 */
 void UpdateOsdTimerClock(void)
 {
-	OsdTimerClock = (DWORD)OsdGetTime() *100;
+	OsdTimerClock = (DWORD)OsdGetTime() * 100;
 	
 	//Turn On FontOSD.
 	FOsdOnOff(ON, 0);	//with vdelay 0

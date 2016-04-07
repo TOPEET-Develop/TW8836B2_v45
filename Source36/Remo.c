@@ -331,11 +331,12 @@ BYTE IsRemoDataReady(BYTE *DataCode, BYTE *AutoKey)
 */
 BYTE CheckRemo(void)
 {
-	BYTE AutoKey,  _RemoDataCode;
-	BYTE ret=0;
+	BYTE AutoKey, _RemoDataCode;
+	BYTE ret = 0;
 
-	if( IsRemoDataReady(&_RemoDataCode, &AutoKey) )	{
-		ret = ActionRemo( _RemoDataCode, (BYTE)AutoKey) ;
+	if (IsRemoDataReady(&_RemoDataCode, &AutoKey))
+	{
+		ret = ActionRemo(_RemoDataCode, (BYTE)AutoKey);
 
 #ifdef DEBUG_KEYREMO
 		//dPrintf("\n\r**** Remo: %02bx, %02bx ", _RemoDataCode, (BYTE)AutoKey);
@@ -345,5 +346,4 @@ BYTE CheckRemo(void)
 
 	return ret;
 }
-
 
