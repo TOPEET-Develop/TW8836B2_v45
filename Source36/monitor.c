@@ -69,8 +69,6 @@ It remains the customers' responsibility to verify the actual system performance
 #include "ImageCtrl.h"
 #include "TouchKey.h"
 #include "measure.h"
-#include "HDMI_EP9351.h"
-#include "HDMI_EP9553.h"
 
 #include "Decoder.h"
 #include "aRGB.h"
@@ -80,7 +78,12 @@ It remains the customers' responsibility to verify the actual system performance
 #include "SOsdMenu.h"
 #include "DebugMsg.h"
 
+#if defined(SUPPORT_HDMI_EP907M)
 #include "HDMI_EP907M.h"
+#include "HDMI_EP9351.h"
+#include "HDMI_EP9553.h"
+#endif
+
 #include "BT656.h"
 #include "Demo.h"
 
@@ -418,10 +421,12 @@ static void monitor_compiler(void)
 #if !defined(SUPPORT_DVI) && !defined(SUPPORT_HDMI)
 		Dummy_DTV_func();
 #endif
+
+#if 0	//lgnq
 #ifndef SUPPORT_HDMI_EP907M
 		Dummy_HDMI_EP907M_func();
 #endif
-
+#endif
 
 		//----------------------------
 		//Trick for Bank Code Segment

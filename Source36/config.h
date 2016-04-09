@@ -118,7 +118,7 @@ It remains the customers' responsibility to verify the actual system performance
 #ifdef SUPPORT_DTV
 	#define SUPPORT_HDMI
 	#ifdef SUPPORT_I2C_MASTER
-		#define SUPPORT_HDMI_EP907M
+		#undef SUPPORT_HDMI_EP907M
 	#endif
 	#undef SUPPORT_HDMI_24BIT		/* conflict with BT656_LOOP */
 	#undef SUPPORT_DEONLY_DTV

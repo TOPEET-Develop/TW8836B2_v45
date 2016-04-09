@@ -672,7 +672,6 @@ static void	HDMISetOutput(WORD HActive, WORD VActive, BYTE	vDE )
 		ScalerSetLineBufferSize(PANEL_H+1);
 }
 
-
 //CheckAndSetHDMI and CheckAndSetLVDS use a same routines to detect the HDMI chip output.
 //let's merge it.
 /*
@@ -706,38 +705,44 @@ BYTE CheckHdmiChipRegister(void)
 	WORD hFPorch,vFPorch;
 	WORD hBPorch,vBPorch;
 #endif
+
 	WORD hActive,vActive;
+
 #if defined(SUPPORT_HDMI_EP907M)
 #else
-	WORD Old_hActive,Old_vActive;
+	WORD Old_hActive, Old_vActive;
+	BYTE i;
 #endif
+
 	BYTE vFreq;
 		
-	WORD hCropStart,vCropStart;
+	WORD hCropStart, vCropStart;
 	BYTE bTemp;
 	struct DIGIT_VIDEO_TIME_TABLE_s *pCEA861;
 	struct SCALER_TIME_TABLE_s *pScaler;
 
-	WORD hSync,vSync;
-	BYTE hPol,vPol;
-
+	WORD hSync, vSync;
+	BYTE hPol, vPol;
 
 #if defined(SUPPORT_HDMI_EP907M)
 	/*
 	If you can control the external device, 
 	*/
 	ret = HdmiCheckConnection();
-	if(ret)
+	if (ret)
 		return ret;
+
 	ret = HdmiCheckMode();	//HDMI or DVI
 
 	//If we using AUTO_VFMTb==0, we don't need it.
 	//
 	//set color space.
-	if(ret) {
+	if (ret)
+	{
 		ret = CheckAviInfoFrame();
 	}
-	else {
+	else
+	{
 		//BKTODO:We need default color space value. RGB,YUV422,YUV420
 		//BK130204. We need a EEPROM value.
 		HdmiSetColorSpace(0x00); //clear
@@ -746,8 +751,9 @@ BYTE CheckHdmiChipRegister(void)
 	HdmiDebugTimingValue();	
 
 	Meas_StartMeasure();
-	ret=Meas_IsMeasureDone(50);
-	if(ret) {
+	ret = Meas_IsMeasureDone(50);
+	if (ret)
+	{
 		/*if measure fail, it measn no signal.*/
 
 		Printf(" meas=> NoSignal");
@@ -760,27 +766,32 @@ BYTE CheckHdmiChipRegister(void)
 	//If we don't know HDMI RX chip, we have to wait until DTV has a stable image.
 	//I will wait total 3 sec.
 	//MeasStartMeasure() use 500ms.
-	for(i=0; i < 6; i++) {
+	for (i = 0; i < 6; i++)
+	{
 		Meas_StartMeasure();
-		ret=Meas_IsMeasureDone(50);
-		if(ret==0)
+		ret = Meas_IsMeasureDone(50);
+		if (ret == 0)
 			break;
 	}
-	if(ret) {
+
+	if (ret)
+	{
 		/*if measure fail, it measn no signal...*/
 		Printf(" meas=> NoSignal");
 		return ERR_FAIL;
 	}
+	
 	/*wait until it has a stable value.*/
 	Old_hActive = MeasGetHActive( &hCropStart );
 	Old_vActive = MeasGetVActive( &vCropStart );
-	for(i=0; i < 10; i++) {
+	for (i = 0; i < 10; i++)
+	{
 		delay1ms(10);
 		Meas_StartMeasure();
 		ret=Meas_IsMeasureDone(50);
 		hActive = MeasGetHActive( &hCropStart );
 		vActive = MeasGetVActive( &vCropStart );
-		if(Old_hActive==hActive && Old_vActive==vActive)
+		if (Old_hActive==hActive && Old_vActive==vActive)
 			break;
 		Old_hActive = hActive;
 		Old_vActive = vActive;
@@ -798,8 +809,8 @@ BYTE CheckHdmiChipRegister(void)
 	vActive = MeasGetVActive( &vCropStart );
 	vFreq = MeasGetVFreq();
 	PrintMeasValue("DTV");
-	if(vFreq==59)
-		vFreq=60;
+	if (vFreq == 59)
+		vFreq = 60;
 
 	/*check sync polarity */
 	if ( hSync > (hActive/2) )	hPol = 0;	//active low. something wrong.
