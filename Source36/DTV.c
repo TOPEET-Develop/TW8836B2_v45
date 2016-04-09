@@ -47,15 +47,6 @@ It remains the customers' responsibility to verify the actual system performance
 #include "measure.h"
 #include "PC_modes.h"
 
-#ifdef SUPPORT_HDMI_TW8837
-#include "HDMI_TW8837.h"
-#endif
-
-#ifdef SUPPORT_HDMI_EP907M
-#include "HDMI_EP907M.h"
-#include "EP907M_RegDef.h"
-#endif
-
 #include "Settings.h"
 
 #include "util.h"
