@@ -67,10 +67,6 @@ BYTE ReadI2CS_Only(BYTE i2cid, BYTE *val, BYTE _cnt);
 #define I2CID_SIL9127_EDID	0xE0
 #define I2CID_SIL9127_CBUS	0xE6
 
-#define I2CID_EP9351		0x78	//Explorer HDMI receiver
-#define I2CID_EP907M		0x78
-#define I2CID_EP9553		0x78
-
 #define I2CID_ISL97901		0x50	//ISL RGB LED Driver
 #define I2CID_ADC121C021	0xAC	//12bit Analog2Digital Converter
 #define I2CID_E330_FLCOS	0x7C	//FLCOS	 

@@ -47,10 +47,10 @@ It remains the customers' responsibility to verify the actual system performance
 #include "measure.h"
 #include "PC_modes.h"
 
-
 #ifdef SUPPORT_HDMI_TW8837
 #include "HDMI_TW8837.h"
 #endif
+
 #ifdef SUPPORT_HDMI_EP907M
 #include "HDMI_EP907M.h"
 #include "EP907M_RegDef.h"
@@ -86,13 +86,10 @@ void Dummy_DTV_func(void)
 }
 #endif
 
-
 /**
 *
 * REG040[2] Enable 2nd DTVCLK
 */
-
-						
 
 #if defined(SUPPORT_DVI) || defined(SUPPORT_HDMI)
 /**
@@ -118,8 +115,6 @@ void DtvSetSyncPolarity(BYTE hPol, BYTE vPol)
 	WriteTW88(REG050, value);	
 }
 #endif
-
-
 
 /**
 * set DTV Color bus order
@@ -947,7 +942,8 @@ BYTE CheckAndSetHDMI(void)
 extern void Interrupt_enableVideoDetect(BYTE fOn);
 
 #if defined(SUPPORT_FAST_INPUT_TOGGLE)
-XDATA REG_IDX_DATA_t Fast_Hdmi_Buff[] = {
+XDATA REG_IDX_DATA_t Fast_Hdmi_Buff[] =
+{
 	{REG040, 0x12},
 	{REG041, 0x51},
 	
@@ -975,12 +971,33 @@ XDATA REG_IDX_DATA_t Fast_Hdmi_Buff[] = {
 };
 #endif
 
+void HdmiInit(void)
+{
+	BYTE i;
+	BYTE bTemp;
+
+	for (i = 0; i < 100; i++)
+	{
+		WriteI2C_multi(0x78, 0x21, 0x2100, 0x10);
+
+		delay1ms(10);
+		bTemp = ReadI2C_multi(0x78, 0x21, 0x2100);
+		if ((bTemp & 0x30) == 0x10)
+			break;
+		delay1ms(10);
+	}
+	Printf(" wait:%d", (WORD)i);
+
+	WriteI2C_multi(0x78, 0x21, 0x2003, 0x04 | 0x01);
+}
+
 BYTE ChangeHDMI(void)
 {
 	BYTE ret;
 
 #if defined(SUPPORT_FAST_INPUT_TOGGLE)
-	if(g_hdmi_checked) {
+	if (g_hdmi_checked)
+	{
 		InputMain = INPUT_HDMIPC;
 
 		LinkCheckAndSetInput();						//link CheckAndSetInput
@@ -994,7 +1011,8 @@ BYTE ChangeHDMI(void)
 		//
 		Meas_StartMeasure();
 		ret=Meas_IsMeasureDone(50);
-		if(ret==0) {
+		if (ret == 0)
+		{
 			WORD hTotal, vTotal;
 			ScalerCalcFreerunValue(&hTotal,&vTotal);
 			ScalerWriteFreerunTotal(hTotal,vTotal);				
@@ -1009,16 +1027,19 @@ BYTE ChangeHDMI(void)
 	}
 #endif
 
-	if ( InputMain == INPUT_HDMIPC || InputMain == INPUT_HDMITV ) {
+	if (InputMain == INPUT_HDMIPC || InputMain == INPUT_HDMITV)
+	{
 		//dPrintf("\n\rSkip ChangeHDMI");
 		return(1);
 	}
 
-	if(GetHdmiModeEE())  InputMain = INPUT_HDMITV;
-	else 				 InputMain = INPUT_HDMIPC;
+	if (GetHdmiModeEE())
+		InputMain = INPUT_HDMITV;
+	else
+		InputMain = INPUT_HDMIPC;
 
-	if(GetInputMainEE() != InputMain)
-		SaveInputMainEE( InputMain );
+	if (GetInputMainEE() != InputMain)
+		SaveInputMainEE(InputMain);
 
 	//dPrintf("\n\rChangeHDMI InputMain:%02bx",InputMain);
 
@@ -1026,14 +1047,14 @@ BYTE ChangeHDMI(void)
 	// initialize video input
 	InitInputAsDefault();
 
-
-#ifdef SUPPORT_HDMI_EP907M
-	HdmiInitEp907MChip();
+#ifdef SUPPORT_HDMI
+	HdmiInit();
 #endif
 
 #ifdef SUPPORT_DEONLY_DTV
 	WriteTW88(REG050, ReadTW88(REG050) | 0x10);
 #endif
+
 #if 0 //def SUPPORT_DEONLY_DTV
 	WriteTW88(REG050, ReadTW88(REG050) &  ~0x80);
 #endif
@@ -1046,6 +1067,7 @@ BYTE ChangeHDMI(void)
 #else
 	ret=ERR_FAIL;
 #endif
+
 	if(ret==ERR_SUCCESS) {
 		//success
 		VInput_enableOutput(0);
