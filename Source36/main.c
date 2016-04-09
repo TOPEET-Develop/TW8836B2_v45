@@ -1381,9 +1381,8 @@ static void SystemPowerSave(void)
 	WriteTW88(REG4E1, 0x00);
 
 	//----- Powerdown HDMI
-#if defined(SUPPORT_HDMI_EP907M)
-	i = ReadI2C_multi(I2CID_EP907M,0x21, EP907M_System_Control);
-	WriteI2C_multi(I2CID_EP907M,0x21, EP907M_System_Control, i | EP907M_System_Control__PD_HDMI);
+#if defined(SUPPORT_HDMI)
+	//power off HDMI device
 #endif
 
 	//----- Powerdown all analog blocks
