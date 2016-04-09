@@ -1496,9 +1496,8 @@ static void SystemPowerResume(void)
 	WriteTW88(REG0B1, ReadTW88(REG0B1) | 0x40);	//Disable Pen INTR
 
 	//----- PowerUp HDMI
-#if defined(SUPPORT_HDMI_EP907M)
-	i = ReadI2C_multi(I2CID_EP907M,0x21, EP907M_System_Control);
-	WriteI2C_multi(I2CID_EP907M,0x21, EP907M_System_Control, i & ~EP907M_System_Control__PD_HDMI);
+#if defined(SUPPORT_HDMI)
+	//power up HDMI device
 #endif
 
 	//----- Set MCU clock mode back
