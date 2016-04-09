@@ -52,58 +52,59 @@ extern    bit     OnChangingValue;
 BYTE previous_key0 = 0;
 BYTE previous_key1 = 0;
 
-#if defined(SUPPORT_HDMI_EP907M)
+#if defined(SUPPORT_HDMI)
 /*
 *
 * @return
 *	if it ate, return 0xFF;
 *	or, return _RemoDataCode.
 */
-#define EP907_EAT_KEY		0xFF
-BYTE ActionRemoEP907M(BYTE _RemoDataCode, BYTE AutoKey)
+#define EAT_KEY		0xFF
+BYTE ActionRemoHDMI(BYTE _RemoDataCode, BYTE AutoKey)
 {
 	BYTE value=AutoKey;
 	BYTE ret=_RemoDataCode;
 
-
-	if(global_CEC_flag==0)
+	if (global_CEC_flag == 0)
 		return ret;
-	value=ReadI2C_multi(0x68,0x21, 0x0900);
-	if((value & 0x03) != 0x03) {
-		Printf("\n\rglobal_CEC_flag ON, but SYS_Status:%bx",value);
+	
+	value = ReadI2C_multi(0x68, 0x21, 0x0900);
+	if ((value & 0x03) != 0x03)
+	{
+		Printf("\n\rglobal_CEC_flag ON, but SYS_Status:%bx", value);
 		return ret;
 	}
 
-	switch(_RemoDataCode) {
-
+	switch(_RemoDataCode)
+	{
 	case REMO_SELECT:	//0x00;Select
-		WriteI2C_multi(0x68,0x21, 0xA01, 0x00);
-		WriteI2C_multi(0x68,0x21, 0xA00, 0x10);
-		ret = EP907_EAT_KEY;
+		WriteI2C_multi(0x68, 0x21, 0xA01, 0x00);
+		WriteI2C_multi(0x68, 0x21, 0xA00, 0x10);
+		ret = EAT_KEY;
 		break;
 	case REMO_CHNUP: //0x01:Up
   		dPuts("\n\rREMO1_CHNUP pressed!!!");
-		WriteI2C_multi(0x68,0x21, 0xA01, 0x01);
-		WriteI2C_multi(0x68,0x21, 0xA00, 0x10);
-		ret = EP907_EAT_KEY;
+		WriteI2C_multi(0x68, 0x21, 0xA01, 0x01);
+		WriteI2C_multi(0x68, 0x21, 0xA00, 0x10);
+		ret = EAT_KEY;
 		break;
 	case REMO_CHNDN: //0x02:Down
   		dPuts("\n\rREMO1_CHNDN pressed!!!");
-		WriteI2C_multi(0x68,0x21, 0xA01, 0x02);
-		WriteI2C_multi(0x68,0x21, 0xA00, 0x10);
-		ret = EP907_EAT_KEY;
+		WriteI2C_multi(0x68, 0x21, 0xA01, 0x02);
+		WriteI2C_multi(0x68, 0x21, 0xA00, 0x10);
+		ret = EAT_KEY;
 		break;
 	case REMO_VOLDN: //0x03:Left
   		dPuts("\n\rREMO1_VOLDN pressed!!!");
-		WriteI2C_multi(0x68,0x21, 0xA01, 0x03);
-		WriteI2C_multi(0x68,0x21, 0xA00, 0x10);
-		ret = EP907_EAT_KEY;
+		WriteI2C_multi(0x68, 0x21, 0xA01, 0x03);
+		WriteI2C_multi(0x68, 0x21, 0xA00, 0x10);
+		ret = EAT_KEY;
 		break;
 	case REMO_VOLUP: //0x04:Right
   		dPuts("\n\rREMO1_VOLUP pressed!!!");
-		WriteI2C_multi(0x68,0x21, 0xA01, 0x04);
-		WriteI2C_multi(0x68,0x21, 0xA00, 0x10);
-		ret = EP907_EAT_KEY;
+		WriteI2C_multi(0x68, 0x21, 0xA01, 0x04);
+		WriteI2C_multi(0x68, 0x21, 0xA00, 0x10);
+		ret = EAT_KEY;
 		break;
  	//0x05:Right-Up
 	//0x06:Right-Down
@@ -112,63 +113,63 @@ BYTE ActionRemoEP907M(BYTE _RemoDataCode, BYTE AutoKey)
 	//
 	case REMO_EXIT:	//0x09:Root Menu
   		dPuts("\n\rREMO_EXIT pressed!!!");
-		WriteI2C_multi(0x68,0x21, 0xA01, 0x09);
-		WriteI2C_multi(0x68,0x21, 0xA00, 0x10);
-		ret = EP907_EAT_KEY;
+		WriteI2C_multi(0x68, 0x21, 0xA01, 0x09);
+		WriteI2C_multi(0x68, 0x21, 0xA00, 0x10);
+		ret = EAT_KEY;
 		break;
 	//0x0A Setup Menu
 	//0x0B: Contents Menu
 	//0x0C: Favoriate Menu
 	//0x0D: Exit
 	case REMO_NUM0:
-		WriteI2C_multi(0x68,0x21, 0xA01, 0x20);
-		WriteI2C_multi(0x68,0x21, 0xA00, 0x10);
-		ret = EP907_EAT_KEY;
+		WriteI2C_multi(0x68, 0x21, 0xA01, 0x20);
+		WriteI2C_multi(0x68, 0x21, 0xA00, 0x10);
+		ret = EAT_KEY;
 		break;
 	case REMO_NUM1:
-		WriteI2C_multi(0x68,0x21, 0xA01, 0x21);
-		WriteI2C_multi(0x68,0x21, 0xA00, 0x10);
-		ret = EP907_EAT_KEY;
+		WriteI2C_multi(0x68, 0x21, 0xA01, 0x21);
+		WriteI2C_multi(0x68, 0x21, 0xA00, 0x10);
+		ret = EAT_KEY;
 		break;
 	case REMO_NUM2:
-		WriteI2C_multi(0x68,0x21, 0xA01, 0x22);
-		WriteI2C_multi(0x68,0x21, 0xA00, 0x10);
-		ret = EP907_EAT_KEY;
+		WriteI2C_multi(0x68, 0x21, 0xA01, 0x22);
+		WriteI2C_multi(0x68, 0x21, 0xA00, 0x10);
+		ret = EAT_KEY;
 		break;
 	case REMO_NUM3:
-		WriteI2C_multi(0x68,0x21, 0xA01, 0x23);
-		WriteI2C_multi(0x68,0x21, 0xA00, 0x10);
-		ret = EP907_EAT_KEY;
+		WriteI2C_multi(0x68, 0x21, 0xA01, 0x23);
+		WriteI2C_multi(0x68, 0x21, 0xA00, 0x10);
+		ret = EAT_KEY;
 		break;
 	case REMO_NUM4:
-		WriteI2C_multi(0x68,0x21, 0xA01, 0x24);
-		WriteI2C_multi(0x68,0x21, 0xA00, 0x10);
-		ret = EP907_EAT_KEY;
+		WriteI2C_multi(0x68, 0x21, 0xA01, 0x24);
+		WriteI2C_multi(0x68, 0x21, 0xA00, 0x10);
+		ret = EAT_KEY;
 		break;
 	case REMO_NUM5:
-		WriteI2C_multi(0x68,0x21, 0xA01, 0x25);
-		WriteI2C_multi(0x68,0x21, 0xA00, 0x10);
-		ret = EP907_EAT_KEY;
+		WriteI2C_multi(0x68, 0x21, 0xA01, 0x25);
+		WriteI2C_multi(0x68, 0x21, 0xA00, 0x10);
+		ret = EAT_KEY;
 		break;
 	case REMO_NUM6:
-		WriteI2C_multi(0x68,0x21, 0xA01, 0x26);
-		WriteI2C_multi(0x68,0x21, 0xA00, 0x10);
-		ret = EP907_EAT_KEY;
+		WriteI2C_multi(0x68, 0x21, 0xA01, 0x26);
+		WriteI2C_multi(0x68, 0x21, 0xA00, 0x10);
+		ret = EAT_KEY;
 		break;
 	case REMO_NUM7:
-		WriteI2C_multi(0x68,0x21, 0xA01, 0x27);
-		WriteI2C_multi(0x68,0x21, 0xA00, 0x10);
-		ret = EP907_EAT_KEY;
+		WriteI2C_multi(0x68, 0x21, 0xA01, 0x27);
+		WriteI2C_multi(0x68, 0x21, 0xA00, 0x10);
+		ret = EAT_KEY;
 		break;
 	case REMO_NUM8:
-		WriteI2C_multi(0x68,0x21, 0xA01, 0x28);
-		WriteI2C_multi(0x68,0x21, 0xA00, 0x10);
-		ret = EP907_EAT_KEY;
+		WriteI2C_multi(0x68, 0x21, 0xA01, 0x28);
+		WriteI2C_multi(0x68, 0x21, 0xA00, 0x10);
+		ret = EAT_KEY;
 		break;
 	case REMO_NUM9:
-		WriteI2C_multi(0x68,0x21, 0xA01, 0x29);
-		WriteI2C_multi(0x68,0x21, 0xA00, 0x10);
-		ret = EP907_EAT_KEY;
+		WriteI2C_multi(0x68, 0x21, 0xA01, 0x29);
+		WriteI2C_multi(0x68, 0x21, 0xA00, 0x10);
+		ret = EAT_KEY;
 		break;
 	//0x2A Dot
 	//0x2B Enter
@@ -178,14 +179,14 @@ BYTE ActionRemoEP907M(BYTE _RemoDataCode, BYTE AutoKey)
 	//0x32 Previous Channel
 	//0x33 Sound Select
 	case REMO_INPUT: // 0x34 Input Select
-		WriteI2C_multi(0x68,0x21, 0xA01, 0x34);
-		WriteI2C_multi(0x68,0x21, 0xA00, 0x10);
-		ret = EP907_EAT_KEY;
+		WriteI2C_multi(0x68, 0x21, 0xA01, 0x34);
+		WriteI2C_multi(0x68, 0x21, 0xA00, 0x10);
+		ret = EAT_KEY;
 		break;
 	case REMO_INFO:	   //0x35 Show Information
-		WriteI2C_multi(0x68,0x21, 0xA01, 0x35);
-		WriteI2C_multi(0x68,0x21, 0xA00, 0x10);
-		ret = EP907_EAT_KEY;
+		WriteI2C_multi(0x68, 0x21, 0xA01, 0x35);
+		WriteI2C_multi(0x68, 0x21, 0xA00, 0x10);
+		ret = EAT_KEY;
 		break;
 	//0x36 Help
 	//0x37 Page Up
@@ -193,9 +194,9 @@ BYTE ActionRemoEP907M(BYTE _RemoDataCode, BYTE AutoKey)
 	//0x41 Volume Up
 	//0x42 Volume Down
 	case REMO_MUTE: //0x43 Mute
-		WriteI2C_multi(0x68,0x21, 0xA01, 0x43);
-		WriteI2C_multi(0x68,0x21, 0xA00, 0x10);
-		ret = EP907_EAT_KEY;
+		WriteI2C_multi(0x68, 0x21, 0xA01, 0x43);
+		WriteI2C_multi(0x68, 0x21, 0xA00, 0x10);
+		ret = EAT_KEY;
 		break;
 	//0x44 Play
 	//0x45 Stop
@@ -218,24 +219,24 @@ BYTE ActionRemoEP907M(BYTE _RemoDataCode, BYTE AutoKey)
 	//0x67 Tune_Function
 	//0x68 Select_Media_Function
 	case REMO_TTXCYAN: 	//0x71 F1 (Blue)
-		WriteI2C_multi(0x68,0x21, 0xA01, 0x71);
-		WriteI2C_multi(0x68,0x21, 0xA00, 0x10);
-		ret = EP907_EAT_KEY;
+		WriteI2C_multi(0x68, 0x21, 0xA01, 0x71);
+		WriteI2C_multi(0x68, 0x21, 0xA00, 0x10);
+		ret = EAT_KEY;
 		break;
 	case REMO_TTXRED:	//0x72 F2 (Red)
-		WriteI2C_multi(0x68,0x21, 0xA01, 0x72);
-		WriteI2C_multi(0x68,0x21, 0xA00, 0x10);
-		ret = EP907_EAT_KEY;
+		WriteI2C_multi(0x68, 0x21, 0xA01, 0x72);
+		WriteI2C_multi(0x68, 0x21, 0xA00, 0x10);
+		ret = EAT_KEY;
 		break;
 	case REMO_TTXGREEN:	 //0x73 F3 (Green)
-		WriteI2C_multi(0x68,0x21, 0xA01, 0x73);
-		WriteI2C_multi(0x68,0x21, 0xA00, 0x10);
-		ret = EP907_EAT_KEY;
+		WriteI2C_multi(0x68, 0x21, 0xA01, 0x73);
+		WriteI2C_multi(0x68, 0x21, 0xA00, 0x10);
+		ret = EAT_KEY;
 		break;
 	case REMO_TTXYELLOW: //0x74 F4 (Yellow)
-		WriteI2C_multi(0x68,0x21, 0xA01, 0x74);
-		WriteI2C_multi(0x68,0x21, 0xA00, 0x10);
-		ret = EP907_EAT_KEY;
+		WriteI2C_multi(0x68, 0x21, 0xA01, 0x74);
+		WriteI2C_multi(0x68, 0x21, 0xA00, 0x10);
+		ret = EAT_KEY;
 		break;
 	//0x75 F5
 	//0x7E Vendor_Specific
@@ -247,13 +248,13 @@ BYTE ActionRemoEP907M(BYTE _RemoDataCode, BYTE AutoKey)
 	case REMO_MENU:
 		break;
 	case REMO_PIPON:
-#if defined(SUPPORT_HDMI_EP907M)
+#if defined(SUPPORT_HDMI)
 		//dPuts("\n\rPIP Display mode change");
 		dPuts("\n\rCEC_AUTO OFF");
 		//WriteI2C_multi(0x68,0x21, 0x800, 0x00);
 		global_CEC_flag = 0;
 
-		ret = EP907_EAT_KEY;
+		ret = EAT_KEY;
 #endif
 		break;			 
 	case REMO_STILL:
@@ -284,26 +285,32 @@ BYTE ActionRemoEP907M(BYTE _RemoDataCode, BYTE AutoKey)
 */
 BYTE ActionGridRemo(BYTE _RemoDataCode)
 {
-	if(_RemoDataCode == REMO_CHNUP) {
+	if (_RemoDataCode == REMO_CHNUP)
+	{
 		TaskSetGridCmd(NAVI_KEY_UP);
 		return 0xFF;
 	}
-	else if(_RemoDataCode == REMO_CHNDN) {
+	else if (_RemoDataCode == REMO_CHNDN)
+	{
 		TaskSetGridCmd(NAVI_KEY_DOWN);
 		return 0xFF;
 	}
-	else if(_RemoDataCode == REMO_VOLDN) {
+	else if (_RemoDataCode == REMO_VOLDN)
+	{
 		TaskSetGridCmd(NAVI_KEY_LEFT);
 		return 0xFF;
 	}
-	else if(_RemoDataCode == REMO_VOLUP) {
+	else if (_RemoDataCode == REMO_VOLUP)
+	{
 		TaskSetGridCmd(NAVI_KEY_RIGHT);
 		return 0xFF;
 	}
-	else if(_RemoDataCode == REMO_MENU || _RemoDataCode == REMO_EXIT) {
+	else if (_RemoDataCode == REMO_MENU || _RemoDataCode == REMO_EXIT)
+	{
 		TaskSetGridCmd(NAVI_KEY_ENTER);
 		return 0xFF;
 	}
+	
 	return _RemoDataCode;
 }
 
@@ -375,12 +382,11 @@ BYTE ActionRemo(BYTE _RemoDataCode, BYTE AutoKey)
 		//else passthru..
 	}
 
-#if defined(SUPPORT_HDMI_EP907M)
+#if defined(SUPPORT_HDMI)
 	//It have to work only when the CEC was enabled...
 	if (MenuGetLevel() == 0 && _RemoDataCode != REMO_MENU)
 	{
-		//return ActionRemoEP907M(_RemoDataCode, AutoKey);
-		value = ActionRemoEP907M(_RemoDataCode, AutoKey);
+		value = ActionRemoHDMI(_RemoDataCode, AutoKey);
 		if (value == 0xFF)
 			return 0;
 		//else passthru..
@@ -557,7 +563,7 @@ BYTE ActionRemo(BYTE _RemoDataCode, BYTE AutoKey)
 	case REMO_PIPON:
 		dPuts("\n\rPIP Display mode change");
 
-#if defined(SUPPORT_HDMI_EP907M)
+#if defined(SUPPORT_HDMI)
 		if (InputMain==INPUT_HDMIPC || InputMain==INPUT_HDMITV)
 		{
 			dPuts("\n\rCEC_AUTO ON");
