@@ -126,7 +126,7 @@ BYTE g_hdmi_checked;
 //-----------------------------------------------------------------------------
 // MHL CEC				                                               
 //-----------------------------------------------------------------------------
-#if defined(SUPPORT_HDMI_EP907M)
+#if defined(SUPPORT_HDMI)
 BYTE global_CEC_flag;
 #endif
 
@@ -1887,7 +1887,7 @@ static void init_global_variables(void)
 	global_Freerun_hTotal =	FREERUN_DEFAULT_HTOTAL;
 	global_Freerun_vTotal = FREERUN_DEFAULT_VTOTAL;
 
-#if defined(SUPPORT_HDMI_EP907M)
+#if defined(SUPPORT_HDMI)
 	global_CEC_flag = 0;
 #endif
 
