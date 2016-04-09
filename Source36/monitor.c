@@ -76,7 +76,6 @@ It remains the customers' responsibility to verify the actual system performance
 #include "EEPROM.H"
 
 #include "SOsdMenu.h"
-#include "DebugMsg.h"
 
 #if defined(SUPPORT_HDMI_EP907M)
 #include "HDMI_EP907M.h"
@@ -440,13 +439,6 @@ static void monitor_compiler(void)
 #ifdef SUPPORT_FOSD_MENU
 		CheckAndClearFOsd();
 #endif
-
-
-#if defined(SUPPORT_HDMI_EP907M)
-#else
-	Dummy_DebugMsg_func();
-#endif
-
 
     //SpiFlash_wait_cmddone(0, 0,0);
     //SpiFlash_DmaCmd(0, 0, 0, 0,0);

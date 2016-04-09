@@ -60,8 +60,6 @@ It remains the customers' responsibility to verify the actual system performance
 
 #include "spi.h"	
 
-#include "DebugMsg.h"	//
-
 //================== Input Measurement ====================================
 //===============================================
 // Measure 1 START

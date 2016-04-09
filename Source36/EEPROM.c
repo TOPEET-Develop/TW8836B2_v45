@@ -39,8 +39,6 @@ It remains the customers' responsibility to verify the actual system performance
 
 #include "aRGB.h"
 
-#include "DebugMsg.h"
-
 #ifdef USE_SFLASH_EEPROM
 
 
@@ -683,7 +681,6 @@ BYTE CheckEEPROM(void)
 	if ( GetFWRevEE() == FWVER )
 		return 0;
 
-	DbgMsg_EEP_Corruptted();
 	SPI_dump(e3p_spi_start_addr);
 
 	//we have a trouble.

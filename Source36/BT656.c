@@ -39,7 +39,6 @@ It remains the customers' responsibility to verify the actual system performance
 #include "measure.h"
 #include "PC_modes.h"
 
-#include "DebugMsg.h"
 #include "BT656.h"
 #include "Settings.h"
 
