@@ -744,7 +744,7 @@ BYTE CheckHdmiChipRegister(void)
 		Printf(" meas=> NoSignal");
 		return ERR_FAIL;
 	}
-#else //..defined(SUPPORT_HDMI_EP907M)
+#else
 	//If you cannot control the external device, 
 	//use the measure method.
 
@@ -782,6 +782,7 @@ BYTE CheckHdmiChipRegister(void)
 		Old_vActive = vActive;
 	}
 #endif
+	
 	//=================================
 	// Read Measured data
 	//=================================
