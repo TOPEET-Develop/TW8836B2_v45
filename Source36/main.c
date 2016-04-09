@@ -56,11 +56,6 @@ It remains the customers' responsibility to verify the actual system performance
 #include "measure.h"
 #include "BT656.h"
 
-#ifdef SUPPORT_HDMI_EP907M
-#include "hdmi_ep907m.h"
-#include "EP907M_RegDef.h"
-#endif
-
 #include "SOsd.h"
 #include "FOsd.h"
 #include "SpiFlashMap.h"

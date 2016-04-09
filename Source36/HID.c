@@ -62,8 +62,8 @@ BYTE previous_key1 = 0;
 #define EAT_KEY		0xFF
 BYTE ActionRemoHDMI(BYTE _RemoDataCode, BYTE AutoKey)
 {
-	BYTE value=AutoKey;
-	BYTE ret=_RemoDataCode;
+	BYTE value = AutoKey;
+	BYTE ret = _RemoDataCode;
 
 	if (global_CEC_flag == 0)
 		return ret;
@@ -564,7 +564,7 @@ BYTE ActionRemo(BYTE _RemoDataCode, BYTE AutoKey)
 		dPuts("\n\rPIP Display mode change");
 
 #if defined(SUPPORT_HDMI)
-		if (InputMain==INPUT_HDMIPC || InputMain==INPUT_HDMITV)
+		if (InputMain == INPUT_HDMIPC || InputMain == INPUT_HDMITV)
 		{
 			dPuts("\n\rCEC_AUTO ON");
 			//BK130402
