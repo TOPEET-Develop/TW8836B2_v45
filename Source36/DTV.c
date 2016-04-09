@@ -930,21 +930,6 @@ BYTE CheckAndSetHDMI(void)
 }
 #endif 
 
-/**
-* some HDMI chip needs to download EDID & HDCP key.
-*/
-#if 0
-void Init_HdmiSystem(void)
-{
-#ifdef SUPPORT_HDMI_TW8837
-	Hdmi_SystemInit_TW8837();
-#endif
-#ifdef SUPPORT_HDMI_EP907M
-	Hdmi_SystemInit_EP907M();
-#endif
-}
-#endif
-
 //=============================================================================
 // Change to HDMI
 //=============================================================================
