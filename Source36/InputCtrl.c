@@ -68,13 +68,6 @@ It remains the customers' responsibility to verify the actual system performance
 //#include "OutputCtrl.h"
 #include "SOsdMenu.h"
 
-#ifdef SUPPORT_HDMI_TW8837
-#include "hdmi_TW8837.H"
-#endif
-#ifdef SUPPORT_HDMI_EP907M
-#include "hdmi_EP907M.H"
-#endif
-
 #include "BT656.h"
 /*
 
