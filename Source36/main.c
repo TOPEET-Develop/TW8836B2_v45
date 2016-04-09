@@ -954,7 +954,7 @@ BYTE InitSystem(BYTE _fPowerUpBoot)
 	if (DebugLevel != 0)
 		ePrintf("\n\r===> Debugging is ON (%02bx)", DebugLevel);
 
-	Printf("\n\rInitSystem(%bd)",fPowerUpBoot);
+	Printf("\n\rInitSystem(%bd)", fPowerUpBoot);
 
 	if ((SFR_WDCON & 0x04))
 	{
