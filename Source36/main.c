@@ -1850,7 +1850,7 @@ static void print_firmware_info(void)
 static void init_global_variables(void)
 {
 	CurrSystemMode = SYS_MODE_NORMAL;
-	DebugLevel=0;
+	DebugLevel = 3;
 	g_access = 1;
 	SW_key = 0;
 
@@ -1862,18 +1862,17 @@ static void init_global_variables(void)
 
 	//search EOT to assign spiflash_chip->mid=0; 
 	spiflash_chip = spiflash_chip_table;	
-	while(spiflash_chip->mid)
+	while (spiflash_chip->mid)
 		spiflash_chip++;
 	SpiFlash4ByteAddr = 0;	//32bit address mode.
-
 
 #ifdef USE_SFLASH_EEPROM
 	e3p_spi_start_addr = E3P_SPI_SECTOR0;
 #endif
+
 	print_spiflash_status_register = &print_spiflash_status_register_default;
 
-	OsdTime	=	0;
-
+	OsdTime	= 0;
 
 #ifdef DEBUG_REMO_NEC
 	DebugRemoStep = 0;
@@ -1900,7 +1899,7 @@ static void init_global_variables(void)
 
 	/* menu */
     menu_on = 0;
-    menu_level=0;
+    menu_level = 0;
 }
 
 //=============================================================================

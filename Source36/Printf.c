@@ -422,10 +422,11 @@ void ePrintf( const char *fmt, ... )
 /**
 * Puts debug level 3
 */
-void dPuts( char *ptr )
+void dPuts(char *ptr)
 {
-	if( DebugLevel >= DEBUG_INFO ) {
-		while(*ptr!='\0')
+	if (DebugLevel >= DEBUG_INFO)
+	{
+		while (*ptr!='\0')
 			RS_tx(*ptr++);
 	}
 }
