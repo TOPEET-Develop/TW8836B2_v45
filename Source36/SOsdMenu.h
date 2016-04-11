@@ -194,7 +194,8 @@ typedef struct menu_fitem_info_s {
 #define MENU_TYPE_NOTE		0x10	//need the selected note.
 #define MENU_TYPE_TEST		0x20
 
-typedef struct menu_page_info_s {
+typedef struct menu_page_info_s
+{
 	BYTE type;					//menu_type	move_left2right, popup,...
 	BYTE focus;					//focused item number
 	BYTE select;				//current selected item number. for input_page aspect_page...
@@ -203,6 +204,7 @@ typedef struct menu_page_info_s {
 	menu_sitem_info_t *items;	//sosd item
 	menu_fitem_info_t *texts;	//fosd item	
 } menu_page_info_t;
+
 extern menu_page_info_t *curr_menu;
 extern BYTE curr_menu_watchdog_focus;
 extern BYTE curr_menu_watchdog_select;

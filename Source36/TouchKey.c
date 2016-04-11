@@ -546,22 +546,29 @@ BYTE GetTouch2(void)
 	//}
 #endif
 
-	if ( TouchChangedOld == TC ) {
+	if (TouchChangedOld == TC)
+	{
         //BKTODO: Use SFRB_ET0=0 and SFRB_ET0=1;
-		if(TouchStatus==TOUCHMOVED && ((TscTimeEnd + TSC_MOVED_THRESHOLD) < SystemClock)) {			//500msec delay
+		if (TouchStatus==TOUCHMOVED && ((TscTimeEnd + TSC_MOVED_THRESHOLD) < SystemClock))
+		{
+			//500msec delay
 			dTscPrintf("\n\rTouch TOUCHMOVED Action dt:%ld", SystemClock - TscTimeEnd);
+
 			return 1;			
 		}
+		
 		return 0;			// no measurement
 	}
 
 	ret = 0;
-	SFRB_ET0=0;
+	SFRB_ET0 = 0;
     TscTimeCurr = SystemClock;
-    SFRB_ET0=1;
+    SFRB_ET0 = 1;
 
-	if(TouchPressedOld) {
-		if(TP) {
+	if (TouchPressedOld)
+	{
+		if (TP)
+		{
 //-----------
 LABEL_TP11: /* Pressed=>Pressed */
 //-----------
@@ -572,28 +579,40 @@ LABEL_TP11: /* Pressed=>Pressed */
 			//--------------------
 			movX = PosX - OldPosX;
 			movY = PosY - OldPosY;
-			if(TWabsShort(movX) <= TSC_MOVE_MIN_THRESHOLD) {
-				if(TouchStatus >= TOUCHMOVE)
+			if (TWabsShort(movX) <= TSC_MOVE_MIN_THRESHOLD)
+			{
+				if (TouchStatus >= TOUCHMOVE)
 					new_status |= TSC_MOVE;	
 			}
-			else {
+			else
+			{
 				new_status |= TSC_MOVE;
-				if(movX > 0) new_status |= TSC_MOVEXPLUS;	//right
-				else         new_status |= TSC_MOVEX;		//left
+				if (movX > 0)
+					new_status |= TSC_MOVEXPLUS;	//right
+				else
+					new_status |= TSC_MOVEX;		//left
 			}
-			if(TWabsShort(movY) <= TSC_MOVE_MIN_THRESHOLD) {
-				if(TouchStatus >= TOUCHMOVE)
+			
+			if (TWabsShort(movY) <= TSC_MOVE_MIN_THRESHOLD)
+			{
+				if (TouchStatus >= TOUCHMOVE)
 					new_status |= TSC_MOVE;	
 			}
-			else {
+			else
+			{
 				new_status |= TSC_MOVE;
-				if(movY > 0) new_status |= TSC_MOVEYPLUS;	//down
-				else         new_status |= TSC_MOVEY;		//up
+				if (movY > 0)
+					new_status |= TSC_MOVEYPLUS;	//down
+				else
+					new_status |= TSC_MOVEY;		//up
 			}
-			if(TouchStatus == new_status) {
+			
+			if (TouchStatus == new_status)
+			{
 				dTscPrintf("\n\rTSC keep Stat:%bx", TouchStatus);
 			}
-			else {
+			else
+			{
 				//PrintTouchStatusParam(new_status);
 				//PrintTouchStatus(0,new_status);
 				TscUpdateStatus(new_status);
@@ -601,14 +620,17 @@ LABEL_TP11: /* Pressed=>Pressed */
 			dTscPrintf(" xypos=%dx%d",PosX, PosY);
 			dTscPrintf(" z:%d(0x%x-0x%x)",CpuZ2-CpuZ1,CpuZ2,CpuZ1);
 
-			if(new_status & (TSC_MOVEX | TSC_MOVEY)) { //move X or Y
+			if (new_status & (TSC_MOVEX | TSC_MOVEY))
+			{
+				//move X or Y
 				OldPosX = PosX;
 				OldPosY = PosY;
 			}
 			//...
 			ret = 1;
 		}
-		else {
+		else
+		{
 //-----------
 //LABEL_TP10: /*Press=>Detached */
 //-----------
@@ -617,46 +639,57 @@ LABEL_TP11: /* Pressed=>Pressed */
 			dt_start = TscTimeCurr - TscTimeStart;	//pressed position(previous)
 			dt_end   = TscTimeCurr - TscTimeEnd;	//detached position(previous)
 
-
-			if(LastTouchStatus>=TOUCHMOVE) {
+			if (LastTouchStatus >= TOUCHMOVE)
+			{
 				//PrintTouchStatus(1, TOUCHMOVED);
 				TscUpdateStatus(TOUCHMOVED);
-				ret=0;
+				ret = 0;
 			}
-			else if(dt_start > TSC_LONGCLICK_THRESHOLD) {	//more then 10sec
+			else if (dt_start > TSC_LONGCLICK_THRESHOLD)
+			{
+				//more then 10sec
 				//PrintTouchStatus(1, TOUCHLONGCLICK);
 				TscUpdateStatus(TOUCHLONGCLICK);
 				ret = 1;
 			}
-			else if(dt_end < TSC_DCLICK_THRESHOLD) {
-				if(TouchStatus >= TOUCHMOVE) {
+			else if (dt_end < TSC_DCLICK_THRESHOLD)
+			{
+				if (TouchStatus >= TOUCHMOVE)
+				{
 					//PrintTouchStatus(1, TOUCHMOVED);
-					TscUpdateStatus(TOUCHMOVED);	 dTscPuts("(DCLK->MOVED)");
+					TscUpdateStatus(TOUCHMOVED);
+					dTscPuts("(DCLK->MOVED)");
 					ret = 0;
 				}
-				else { 
+				else
+				{ 
 					//PrintTouchStatus(1, TOUCHDOUBLECLICK);
 					TscUpdateStatus(TOUCHDOUBLECLICK);
 					ret = 1;
 				}
 			}
-			else {
-				if(TouchStatus >= TOUCHMOVE) {
+			else
+			{
+				if (TouchStatus >= TOUCHMOVE)
+				{
 					//PrintTouchStatus(1, TOUCHMOVED);
-					TscUpdateStatus(TOUCHMOVED);	 dTscPuts("(CLK->MOVED)");
+					TscUpdateStatus(TOUCHMOVED);
+					dTscPuts("(CLK->MOVED)");
 					ret = 0;
 				}
-				else {
+				else
+				{
 					//PrintTouchStatus(1, TOUCHCLICK); 
 					TscUpdateStatus(TOUCHCLICK);
 					ret = 1;
 				}
 			}
-			dTscPrintf(" xypos=%dx%d",PosX, PosY);
-			dTscPrintf(" z:%d(0x%x-0x%x)",CpuZ2-CpuZ1,CpuZ2);
-			dTscPrintf(" dt_start:%ld dt_end:%ld",dt_start,dt_end);
+			dTscPrintf(" xypos=%dx%d", PosX, PosY);
+			dTscPrintf(" z:%d(0x%x-0x%x)", CpuZ2-CpuZ1, CpuZ2);
+			dTscPrintf(" dt_start:%ld dt_end:%ld", dt_start, dt_end);
 
-			if(TouchStatus == TOUCHMOVED) {
+			if (TouchStatus == TOUCHMOVED)
+			{
 				movX = OldPosX - StartX;
 				movX = TWabsShort(movX);
 				movY = OldPosY - StartY;
@@ -668,32 +701,39 @@ LABEL_TP11: /* Pressed=>Pressed */
 				veloY = 1000;
 				veloY *= movY;
 				veloY /= dt_start;
-				dTscPrintf(" Velocity X:%ld Y:%ld", veloX,veloY );
+				dTscPrintf(" Velocity X:%ld Y:%ld", veloX, veloY);
 			}
+			
 			TscTimeEnd = TscTimeCurr;
 		}
 	}
-	else {
-		if(TP) {
+	else
+	{
+		if (TP)
+		{
 //-----------
 //LABEL_TP01: /*Detached=>Pressed.*/
 //-----------
 			//NOTE:update TscTimeStart. StartX,StartY
-			dt_end   = TscTimeCurr - TscTimeEnd;	//detached position(previous)
+			dt_end = TscTimeCurr - TscTimeEnd;	//detached position(previous)
 
-			if(TouchStatus==TOUCHMOVED) {
+			if (TouchStatus == TOUCHMOVED)
+			{
 				//if TP0_MOVED, TouchStatus=TOUCHMOVE and then goto LABEL_TP11.
 				//Touch is pressed before TSC_MOVED_THRESHOLD. It will ignore the previous unpress state.
 				//PrintTouchStatus(1,TOUCHMOVE); dTscPuts(" RECOVER1 ");
 				TscUpdateStatus(TOUCHMOVE);
 				goto LABEL_TP11;
 			}
-			else if(LastTouchStatus==TOUCHMOVED && dt_end < TSC_PRESS_RECOVER_THRESHOLD) {	 //assume TouchStatus==TOUCHEND
+			else if (LastTouchStatus==TOUCHMOVED && dt_end < TSC_PRESS_RECOVER_THRESHOLD)
+			{
+				//assume TouchStatus==TOUCHEND
 				//PrintTouchStatus(1,TOUCHMOVE); dTscPuts(" RECOVER2 ");
 				TscUpdateStatus(TOUCHMOVE);
 				goto LABEL_TP11;
 			}
-			else {
+			else
+			{
 				//PrintTouchStatus(1,TOUCHPRESS);
 				TscUpdateStatus(TOUCHPRESS);
 				_TscGetScreenPos();
@@ -706,7 +746,8 @@ LABEL_TP11: /* Pressed=>Pressed */
 			}
 			ret = 1;
 		}
-		else {
+		else
+		{
 //-----------
 //LABEL_TP00: /*Deteched=>Deteched */
 //-----------
@@ -857,14 +898,17 @@ void WaitTouchButtonUp( void )
 /**
 * set TouchStatus
 */
-void SetTouchStatus( BYTE ts )
+void SetTouchStatus(BYTE ts)
 {
-	dTscPrintf("SetTouchStatus(%bx)\n",ts);
-	if(TouchStatus != ts) {
+	dTscPrintf("SetTouchStatus(%bx)\n", ts);
+
+	if (TouchStatus != ts)
+	{
 		LastTouchStatus = TouchStatus;
 		TouchStatus = ts;
 	}
 }
+
 /**
 * update Touch Status
 */

@@ -625,7 +625,7 @@ BYTE ActionTouch(void)
 {
 	BYTE TscStatus;
 	BYTE ret;
-	WORD	xpos, ypos;
+	WORD xpos, ypos;
 
 #ifdef DEBUG_TOUCH_SW
 	dPrintf("\n\r==>Tsc Action");
@@ -637,25 +637,31 @@ BYTE ActionTouch(void)
 	xpos = PosX;
 	ypos = PosY;
 
-	if(MenuGetLevel()==0) {
- 
-		if(TaskGetGrid()) {
-			if(TscStatus == TOUCHCLICK || TscStatus == TOUCHDOUBLECLICK)
+	if (MenuGetLevel() == 0)
+	{
+		if (TaskGetGrid())
+		{
+			if (TscStatus == TOUCHCLICK || TscStatus == TOUCHDOUBLECLICK)
 			{
 				TaskSetGridCmd(NAVI_KEY_ENTER);
 				return 0;
 			}
 		}
-		if(TscStatus == TOUCHDOUBLECLICK) {
+		
+		if (TscStatus == TOUCHDOUBLECLICK)
+		{
 			MenuStart();
 			SetTouchStatus(TOUCHEND); //BK111108
 		}
-		else if(TscStatus == TOUCHPRESS || TscStatus >= TOUCHMOVE) {
+		else if (TscStatus == TOUCHPRESS || TscStatus >= TOUCHMOVE)
+		{
 		}
-		else if(TscStatus == TOUCHMOVED) {
+		else if (TscStatus == TOUCHMOVED)
+		{
 			SetTouchStatus(TOUCHEND); //END
 		}
-		else if(TscStatus == TOUCHCLICK) {
+		else if (TscStatus == TOUCHCLICK)
+		{
 			SetTouchStatus(TOUCHEND); //END
 		}
 
@@ -663,10 +669,12 @@ BYTE ActionTouch(void)
 	}
 
 	//in the menu
-	if(TscStatus == TOUCHPRESS || (TscStatus >= TOUCHMOVE)) {
+	if (TscStatus == TOUCHPRESS || (TscStatus >= TOUCHMOVE))
+	{
 		//serial input mode.
 		ret = MenuIsTouchCalibMode();
-		if(ret) {
+		if (ret)
+		{
 			CalibTouch(ret-1);
 
 			MenuKeyInput(NAVI_KEY_ENTER); //goto next "+"
@@ -679,23 +687,28 @@ BYTE ActionTouch(void)
 //			MenuCheckTouchInput(TscStatus, xpos, ypos);
 //			//note: do not call SetTouchStatus(0);
 //		}
-		else {
+		else
+		{
 			//
 			//update focus.
 			//
 			MenuCheckTouchInput(TscStatus, xpos, ypos);
 			//note: do not call SetTouchStatus(0);
 		}
+
 		return 0;
 	}
 	//else if(TscStatus == TOUCHMOVE) {
 	//	//if lost focus, do something.
 	//}
-	else if(TscStatus == TOUCHCLICK || TscStatus == TOUCHDOUBLECLICK || TscStatus == TOUCHLONGCLICK || TscStatus == TOUCHMOVED) {
+	else if (TscStatus == TOUCHCLICK || TscStatus == TOUCHDOUBLECLICK || TscStatus == TOUCHLONGCLICK || TscStatus == TOUCHMOVED)
+	{
 		//action mode
 
-		if(TscStatus == TOUCHLONGCLICK) {
-			if(MenuGetLevel()==1 || MenuIsSystemPage()) {
+		if (TscStatus == TOUCHLONGCLICK)
+		{
+			if (MenuGetLevel()==1 || MenuIsSystemPage())
+			{
 				//special.
 				//use default value.
 				MenuTouchCalibStart();
@@ -704,28 +717,29 @@ BYTE ActionTouch(void)
 			}
 		}
 
-		if(TscStatus == TOUCHMOVED)
+		if (TscStatus == TOUCHMOVED)
 			TscStatus = TOUCHCLICK;
 
-		MenuCheckTouchInput(TscStatus,xpos, ypos);
+		MenuCheckTouchInput(TscStatus, xpos, ypos);
 		SetTouchStatus(TOUCHEND);  //BK110601
+
 		return 0;
 	}
+	
 	ePrintf("\n\rUnknown TscStatus :%bd", TscStatus);
 
 	return 1;
 }
 #endif
 
-
 /**
 * check Key input
 *
 * keypad: LEFT, RIGHT, DOWN, UP, MENU, MODE
 */
-BYTE CheckKeyIn( void ) 
+BYTE CheckKeyIn(void) 
 {
-	BYTE	key;
+	BYTE key;
 
 //#ifdef SUPPORT_TOUCH
 //	//if we support the touch, we need to init TscAdc again
@@ -734,13 +748,16 @@ BYTE CheckKeyIn( void )
 
 	//key = ReadKeyPad();
 	key = GetKey(1);
-	if(key == 0) {
+	if (key == 0)
+	{
 		//sw key
-		if(SW_key) {
+		if (SW_key)
+		{
 			key = SW_key;
 			SW_key=0;
 		}
-		if( key == 0)
+		
+		if (key == 0)
 			return 0;
 	}
 
@@ -751,7 +768,8 @@ BYTE CheckKeyIn( void )
 
 #ifdef DEBUG_KEYREMO
 	dPrintf("\n\rGetKey(1):%02bx ",key);
-	switch(key) {
+	switch (key)
+	{
   	case KEY_RIGHT:	dPuts("Right"); break;
 	case KEY_UP:	dPuts("Up"); break;
 	case KEY_LEFT:	dPuts("Left"); break;
@@ -762,8 +780,10 @@ BYTE CheckKeyIn( void )
 	}
 #endif
 
-	if(TaskGetGrid()) {
-		switch(key) {
+	if (TaskGetGrid())
+	{
+		switch (key)
+		{
 	  	case KEY_RIGHT:
 			TaskSetGridCmd(NAVI_KEY_RIGHT);
 			break;
@@ -784,18 +804,21 @@ BYTE CheckKeyIn( void )
 		return 0;
 	}
 
-
-	switch ( key ) {
+	switch (key)
+	{
 	  case 	KEY_RIGHT:
 #ifdef SUPPORT_FOSD_MENU
-		if(  DisplayedOSD & FOSD_MENU  ) {
-			if( OnChangingValue ) 	FOsdMenuValueUpDn(FOSD_UP );
-			else					FOsdMenuProcSelectKey();			
+		if (DisplayedOSD & FOSD_MENU)
+		{
+			if (OnChangingValue)
+				FOsdMenuValueUpDn(FOSD_UP);
+			else
+				FOsdMenuProcSelectKey();			
 		}
 		else 
 #endif
 #if defined(SUPPORT_SPIOSD)
-		if(MenuGetLevel())
+		if (MenuGetLevel())
 			MenuKeyInput(NAVI_KEY_RIGHT);
 		else
 #endif
@@ -809,12 +832,12 @@ BYTE CheckKeyIn( void )
 
 	  case 	KEY_UP:
 #ifdef SUPPORT_FOSD_MENU
-		if(DisplayedOSD & FOSD_MENU)
+		if (DisplayedOSD & FOSD_MENU)
 			FOsdMenuMoveCursor(FOSD_UP);
 		else
 #endif
 #if defined(SUPPORT_SPIOSD)
-		if(MenuGetLevel())
+		if (MenuGetLevel())
 			MenuKeyInput(NAVI_KEY_UP);
 		else
 #endif

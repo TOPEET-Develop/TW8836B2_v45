@@ -364,8 +364,8 @@ static BYTE IsTouchInput(void)
 {
 	BYTE tc,tp;
 	BYTE ret;
-	static BYTE savedCpuTouchChanged=0; 
-	static BYTE savedCpuTouchPressed=0; 
+	static BYTE savedCpuTouchChanged = 0; 
+	static BYTE savedCpuTouchPressed = 0; 
 
 	SFRB_ET1 = 0;
 	tc = CpuTouchChanged;
@@ -373,12 +373,14 @@ static BYTE IsTouchInput(void)
 	SFRB_ET1 = 1;
 
 	ret = 0;
-	if(savedCpuTouchChanged != tc
-	&& savedCpuTouchPressed != tp) {
+	if (savedCpuTouchChanged != tc && savedCpuTouchPressed != tp)
+	{
 		ret = 1; 	//something happen
 	}
+
 	savedCpuTouchChanged = tc;
 	savedCpuTouchPressed = tp;
+
 	return ret; 
 }
 #endif
@@ -471,6 +473,7 @@ BYTE main_loop(void)
 		if (TraceAuto) 
 			TraceTouch();
 #endif
+
 		if (IsTouchInput())
 		{
 			ret = GetTouch2();
@@ -1282,7 +1285,6 @@ BYTE IsBackDrivePortOn(void)
 //-----------------------------------------------------------------------------
 /**
  * Update OSD Timer
- *
 */
 void UpdateOsdTimerClock(void)
 {

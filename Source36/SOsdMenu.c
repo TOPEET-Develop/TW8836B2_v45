@@ -1210,33 +1210,36 @@ void proc_menu_bg(void)
 	SOsd_CleanReg();
 //	SOsd_CleanLutOffset();
 
-	MenuDrawCurrImage(0,0);									//draw background
+	MenuDrawCurrImage(0, 0);									//draw background
 
-	if(curr_menu_type==MENU_TYPE_LIST 
-	|| curr_menu_type==MENU_TYPE_SCRLDN) {
+	if (curr_menu_type==MENU_TYPE_LIST || curr_menu_type==MENU_TYPE_SCRLDN)
+	{
 		//update HW and clear UseSOsdHwBuff mode.
 		SOsd_show(1);
 		UseSOsdHwBuff = 0;
 
-		if(menu_lock_scroll==0) {
-			if(curr_menu_type == MENU_TYPE_LIST)
+		if (menu_lock_scroll == 0)
+		{
+			if (curr_menu_type == MENU_TYPE_LIST)
 				MenuDrawScrollImage(1, NAVI_KEY_RIGHT);		//left side
-			else if(curr_menu_type == MENU_TYPE_SCRLDN) {
+			else if (curr_menu_type == MENU_TYPE_SCRLDN)
+			{
 				MenuDrawScrollImage(1, NAVI_KEY_DOWN);		//top topdown moving
 			}
-			else {
+			else
+			{
 				dMenuPrintf("\n\rinvalid curr_menu->type:%bx",curr_menu->type);
-				MenuDrawCurrImage(0,1);
+				MenuDrawCurrImage(0, 1);
 			}
-			menu_lock_scroll=1;
+			menu_lock_scroll = 1;
 		}
 		else
-			MenuDrawCurrImage(0,1);
+			MenuDrawCurrImage(0, 1);
 	}
 
-	MenuDrawCurrImage(0,curr_menu->focus);			//draw focused item
-	if(curr_menu->type & MENU_TYPE_NOTE ) 			//draw selected note symbol(bar or point)
-		MenuDrawCurrImage(0,curr_menu->select+curr_menu->item_total);	//select
+	MenuDrawCurrImage(0, curr_menu->focus);			//draw focused item
+	if (curr_menu->type & MENU_TYPE_NOTE) 			//draw selected note symbol(bar or point)
+		MenuDrawCurrImage(0, curr_menu->select+curr_menu->item_total);	//select
 
 	//if(UseSOsdHwBuff) 
 	{
@@ -1244,7 +1247,6 @@ void proc_menu_bg(void)
 		UseSOsdHwBuff = 0;
 	}
 }
-
 
 //=========================
 // KEY & TOUCH
@@ -5074,12 +5076,13 @@ void MenuStart(void)
 	UseSOsdHwBuff = 0;
 
 	//turn off NoSignal Task if it was ON
-	if(TaskNoSignal_getCmd() != TASK_CMD_DONE) {
+	if (TaskNoSignal_getCmd() != TASK_CMD_DONE)
+	{
 		TaskNoSignal_setCmd(TASK_CMD_DONE); 
 	}
 
 	//turn off Logo if it was ON
-	if(NoSignalLogoShow)
+	if (NoSignalLogoShow)
 		RemoveLogo(); 
 
 	//Init SPOOSD
@@ -5116,10 +5119,9 @@ void MenuStart(void)
 	//init SOSD
 	SpiOsdEnable(ON);
 	SOsd_UpdateRlc();
-	SOsd_SetSpiStartBit(1,0);
-	SOsd_SetLutOffset( 1, 0 /*SOSD_WIN_BG,  WINBG_LUTLOC*/ );  //old: SpiOsdLoadLUT_ptr
+	SOsd_SetSpiStartBit(1, 0);
+	SOsd_SetLutOffset(1, 0 /*SOSD_WIN_BG,  WINBG_LUTLOC*/ );  //old: SpiOsdLoadLUT_ptr
 //	SpiOsdWinFillColor( 1, 0 );
-
 
 	//link menu_main_info.
 	curr_menu = &menu_main_page;  //BK160209
