@@ -451,11 +451,12 @@ void _TscGetScreenPos( void )
 /**
 * init Touch
 */
-void InitAuxADC( void )
+void InitAuxADC(void)
 {
 #ifdef SUPPORT_TOUCH
 	BYTE val;
 #endif
+
 	dPuts("\n\rInitTouch");
 
 #ifdef SUPPORT_TOUCH
@@ -464,37 +465,34 @@ void InitAuxADC( void )
 	//read CalibDataX[] and CalibDataY[] from EEPROM.
 	ReadCalibDataFromEE();
 
-
 	CpuTouchStep = 0;
-	WriteTW88(REG0B0, 0x02 );				//power up. with Z2 measure
-	WriteTW88(REG0B1, 0xF8 );				//TODO:Touch Ready & Touch Pen is not implemented yet.
-											// 
+	WriteTW88(REG0B0, 0x02);				//power up. with Z2 measure
+	WriteTW88(REG0B1, 0xF8);				//TODO:Touch Ready & Touch Pen is not implemented yet.
 
 	//--------------------------------------------
 	//Check connector
-	WriteTW88(REG0B4, 0x02 ); 
-	WriteTW88(REG0B0, 0x20 | ReadTW88(REG0B0) );	//need a start command
+	WriteTW88(REG0B4, 0x02); 
+	WriteTW88(REG0B0, 0x20 | ReadTW88(REG0B0));	//need a start command
 	delay1ms(1);	//need more than 1CLK cycle.
 	val = ReadTW88(REG0B2);
-	if( val < 0x80  ) {
-		dPrintf("--FAIL.%bx",val);
+	if (val < 0x80)
+	{
+		dPrintf("--FAIL.%bx", val);
 		// do not power down. Still you need a keypad.
 		TscHwReady = 0;
 	}
-	else {
-		dPrintf("--OK.%bx",val);
+	else
+	{
+		dPrintf("--OK.%bx", val);
 		TscHwReady = 1;
 	}
-	WriteTW88(REG0B0, ~0x20 & ReadTW88(REG0B0) );
-
-
+	WriteTW88(REG0B0, ~0x20 & ReadTW88(REG0B0));
 
 #if 1	//120323 Touch Spec. can support from div8~64 : 4MHz~320K.
-	WriteTW88(REG0B4, 0x0A );				// div 8, rsel=10k, continuous sensing mode
+	WriteTW88(REG0B4, 0x0A);				// div 8, rsel=10k, continuous sensing mode
 #else
-	WriteTW88(REG0B4, 0x0C );				// div 32, rsel=10k, continuous sensing mode
+	WriteTW88(REG0B4, 0x0C);				// div 32, rsel=10k, continuous sensing mode
 #endif
-
 
 	SFRB_EINT6 = 0;
 	CpuTouchPressed = 0;
@@ -503,14 +501,12 @@ void InitAuxADC( void )
 	CpuTouchSkipCount = 0;
 	SFRB_ET1 = 1;
 
-
 	SetTouchStatus(TOUCHEND);
 	SetLastTouchStatus(TOUCHEND);
 #else
 	dPuts("-removed");
 #endif
 }
-
 
 //return
 //	success: if need an Action

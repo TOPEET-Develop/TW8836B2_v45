@@ -257,7 +257,8 @@ void main(void)
         EnableRemoInt();    /* enable remote controller */
         InitAuxADC();	    /* init touch */
     	EnableWatchdog(1);  /* enable watchdog */
-        if(menu_on) {
+        if (menu_on)
+		{
             /* If memu was on, we have to recover focus and select.
                This code only recover focus */
             curr_menu->focus = curr_menu_watchdog_focus;
@@ -1119,12 +1120,12 @@ BYTE InitSystem(BYTE _fPowerUpBoot)
 */
 void TaskNoSignal_setCmd(BYTE cmd) 
 { 	
-	if(cmd == TASK_CMD_WAIT_VIDEO && MenuGetLevel())	
+	if (cmd == TASK_CMD_WAIT_VIDEO && MenuGetLevel())	
 		Task_NoSignal_cmd = TASK_CMD_DONE;	
 	else
 		Task_NoSignal_cmd = cmd;
 
-	if(cmd == TASK_CMD_RUN_FORCE)
+	if (cmd == TASK_CMD_RUN_FORCE)
 		tic_task = NOSIGNAL_TIME_INTERVAL;	//right now
 
 	Task_NoSignal_count = 0;
@@ -1779,25 +1780,26 @@ BYTE InitRCDMode(BYTE fPowerUpBoot)
 */
 static void print_firmware_info(void)
 {
-	//-------------------------------------
 	Puts("********************************************************\n");
+
 	/* model */
 #if defined(MODEL_TW8836B2)
 	Puts(" TW8836B2");
 #else
 	Puts(" TW88XX");
 #endif
+
 	Puts(" ");
 
 	/* board revision */
 #if defined(MODEL_TW8836DEMO)
 	Puts("Demo ");
-
 #elif defined(EVB_11)
 	Puts("EVB 1.1 - ");
 #else
 	Puts("XXX 0.0 - ");
 #endif
+
 	/*FW revision */
 	Printf(" FW %bx.%bx -", (BYTE)(FWVER >> 8), (BYTE)FWVER);
 
@@ -1808,14 +1810,18 @@ static void print_firmware_info(void)
 #ifdef SUPPORT_I2CCMD_SERVER
 	Puts(" Server");
 #endif
+
 	/* RearCameraDisplay */
 #ifdef SUPPORT_RCD
 	Puts(" RCD");
 #endif
+
 	Puts("\n");
+
 	//------------------------
 	/* panel info */
-	Printf(" Panel %dx%d ",(WORD)PANEL_H,(WORD)PANEL_V);
+	Printf(" Panel %dx%d ", (WORD)PANEL_H, (WORD)PANEL_V);
+
 #ifdef PANEL_TCON
 	Puts("TCON");
 #elif defined(PANEL_SRGB)
@@ -1827,12 +1833,10 @@ static void print_firmware_info(void)
 #else
 	Puts("Unknown");	
 #endif
+
 	Puts("\n");
 	Puts("********************************************************\n");
 }
-
-
-
 
 //=============================================================================
 // INIT ROUTINES
