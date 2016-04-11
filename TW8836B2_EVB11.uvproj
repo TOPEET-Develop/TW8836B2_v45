@@ -289,7 +289,7 @@
             <uAregs>0</uAregs>
             <UseInterruptVector>1</UseInterruptVector>
             <Fuzzy>3</Fuzzy>
-            <Optimize>9</Optimize>
+            <Optimize>8</Optimize>
             <WarningLevel>2</WarningLevel>
             <SizeSpeed>1</SizeSpeed>
             <ObjectExtend>1</ObjectExtend>
@@ -566,11 +566,6 @@
               <FilePath>source36\misc.c</FilePath>
             </File>
             <File>
-              <FileName>HDMI_EP907M.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>source36\HDMI_EP907M.c</FilePath>
-            </File>
-            <File>
               <FileName>BT656.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\Source36\BT656.c</FilePath>
@@ -666,11 +661,6 @@
               <FileName>monitor_menu.c</FileName>
               <FileType>1</FileType>
               <FilePath>source36\monitor_menu.c</FilePath>
-            </File>
-            <File>
-              <FileName>DebugMsg.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>source36\DebugMsg.c</FilePath>
             </File>
           </Files>
         </Group>
