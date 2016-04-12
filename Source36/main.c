@@ -692,7 +692,8 @@ void CheckGpioExpender(BYTE fPowerUpBoot)
 {
 	BYTE value;
 
-	if(fPowerUpBoot) {
+	if (fPowerUpBoot)
+	{
 #if defined(DEBUG_I2C)
 		Printf("\n\rdef: SDA:%bd, SCL:%bd", (BYTE)I2C_SDA, (BYTE)I2C_SCL);
 		I2C_SCL = 1;
@@ -707,13 +708,13 @@ void CheckGpioExpender(BYTE fPowerUpBoot)
 #endif
 
 		//check I2C port.
-		if(I2C_SCL == 0)
+		if (I2C_SCL == 0)
 			I2C_SCL = 1;
-		if(I2C_SCL == 0)
+		if (I2C_SCL == 0)
 			Printf("\n\rWARN:I2C_SCL low");
-		if(I2C_SDA == 0)
+		if (I2C_SDA == 0)
 			I2C_SDA = 1;
-		if(I2C_SDA == 0)
+		if (I2C_SDA == 0)
 			Printf("\n\rWARN:I2C_SDA low");
 
 		/*
@@ -723,15 +724,17 @@ void CheckGpioExpender(BYTE fPowerUpBoot)
 		*	1: NAK
 		*	2: I2C dead
 		*/
-		value=CheckI2C(I2CID_SX1504);
-		switch(value) {
+		value = CheckI2C(I2CID_SX1504);
+		switch (value)
+		{
 		case 0:		Puts("\n\rI2CID_SX1504:Pass");			break;
 		case 1:		Puts("\n\rI2CID_SX1504:NAK");			break;
 		case 2:		Puts("\n\rI2CID_SX1504:Dead");			break;
 		default:	Printf("\n\rI2CID_SX1504:%bx",value);	break;
 		}
+
 #ifdef DEBUG_I2C
-		if(value==0)
+		if (value == 0)
 			//ok. print the chip default value
 			Printf("\n\rI2CID_SX1504 %02bx %02bx %02bx %02bx",
 				ReadI2CByte(I2CID_SX1504, 0), 
@@ -739,13 +742,16 @@ void CheckGpioExpender(BYTE fPowerUpBoot)
 				ReadI2CByte(I2CID_SX1504, 2),
 				ReadI2CByte(I2CID_SX1504, 3));
 #endif
-		if(g_access) {
+
+		if (g_access)
+		{
 			//turn off FPPWC & FPBias. make default
 			//	0x40 R0 R1 is related with FP_PWC_OnOff
 			WriteI2CByte( I2CID_SX1504, 1, 0xFF);		//RegDir:	input 
 			WriteI2CByte( I2CID_SX1504, 0, 0xFF);		//RegData:	FPBias OFF. FPPWC disable.
 			WriteI2CByte( I2CID_SX1504, 2, 0x00);		//disable PullUp
 			WriteI2CByte( I2CID_SX1504, 3, 0x00);		//disable Pulldown
+
 			//print the FW default value
 			Printf("\n\rI2CID_SX1504 %02bx %02bx %02bx %02bx",
 				ReadI2CByte(I2CID_SX1504, 0), 

@@ -436,7 +436,6 @@ BYTE ReadI2C_Only(BYTE i2cid)
 	return value;
 }
 
-
 /**
 * read one byte data from I2C slave device
 *
@@ -451,18 +450,23 @@ BYTE ReadI2CByte(BYTE i2cid, BYTE index)
 
 	//--SFRB_EA=0;
 	I2C_Start();		  
+
 	ret = I2C_WriteData(i2cid);		ret<<=1;
 	ret +=I2C_WriteData(index);		ret<<=1;
+
 	I2C_Start();
+
 	ret +=I2C_WriteData(i2cid | 0x01);
 	value=I2C_ReadData(1);
+
 	I2C_Stop();
 	//--SFRB_EA=1;
 
 #if defined(DEBUG_I2C)
-	if(ret)
+	if (ret)
 		Printf("\n\rReadI2CByte[%bx:%bx] FAIL:%bx",i2cid,index, ret);
 #endif
+
 	return value;
 }
 

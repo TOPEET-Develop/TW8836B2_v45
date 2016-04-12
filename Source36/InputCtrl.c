@@ -514,26 +514,37 @@ void Bt656DecSetClkPol(BYTE fInvClk)
 	WriteTW88(REG047, value);
 }
 
-
 //=====================================================
 // LVDS Rx
 //=====================================================
 void LvdsRxEnable(BYTE fOn)
 {
 	BYTE bTemp;
+	
 	bTemp = ReadTW88(REG648);
-	if(fOn) bTemp |=  0x02;
-	else    bTemp &= ~0x02;
+
+	if (fOn)
+		bTemp |=  0x02;
+	else
+		bTemp &= ~0x02;
+
 	WriteTW88(REG648, bTemp);
 }
+
 void LvdsRxPowerDown(BYTE fOn)
 {
 	BYTE bTemp;
+
 	bTemp = ReadTW88(REG64C);
-	if(fOn) bTemp &= ~0x40; //power down
-	else    bTemp |=  0x40; //normal
+
+	if (fOn)
+		bTemp &= ~0x40; //power down
+	else
+		bTemp |=  0x40; //normal
+
 	WriteTW88(REG64C, bTemp);
 }
+
 void InitLvdsRx(void)
 {
 	WriteTW88(REG648, 0x07);
@@ -544,8 +555,6 @@ void InitLvdsRx(void)
 	WriteTW88(REG64D, 0x17);
 	WriteTW88(REG64E, 0x00);
 }
-
-
 
 //-----------------------------------------------------------------------------
 /**
@@ -701,7 +710,7 @@ void InitInputAsDefault(void)
 	//	Download the recover register values.
 	//	set sspll
 	//	select MCU/SPI Clock
-	Init8836AsDefault(InputMain,0);
+	Init8836AsDefault(InputMain, 0);
 
 	//---------------------------------
 	//step3:
@@ -709,7 +718,8 @@ void InitInputAsDefault(void)
 	//-------------------
 
 	//InputSource  (InMux)
-	switch(InputMain) {
+	switch (InputMain)
+	{
 	case INPUT_CVBS:
 	case INPUT_SVIDEO:
 		InputSetSource(INPUT_PATH_DECODER,INPUT_FORMAT_YCBCR);
@@ -746,23 +756,24 @@ void InitInputAsDefault(void)
 
 	//BT656 Output
 #ifdef SUPPORT_UART1
-	BT656EncOutputEnable(OFF,0);
+	BT656EncOutputEnable(OFF, 0);
 #elif defined(SUPPORT_RCD)
 	//enable only when you selectINPUT_BT656.
 	//you have to select other input to activate RCD.
-	if(InputMain==INPUT_BT656)
-		BT656EncOutputEnable(ON,0);
+	if (InputMain==INPUT_BT656)
+		BT656EncOutputEnable(ON, 0);
 	else
-		BT656EncOutputEnable(OFF,0);
-	BT656_A_Output(0 /*BT656_A_OUT_DEC_I*/,0,0); //BK150417
+		BT656EncOutputEnable(OFF, 0);
+	BT656_A_Output(0 /*BT656_A_OUT_DEC_I*/, 0, 0); //BK150417
 #else
-	BT656EncOutputEnable(ON,0);
-	BT656_A_Output(0 /*BT656_A_OUT_DEC_I*/,0,0); //BK141216
+	BT656EncOutputEnable(ON, 0);
+	BT656_A_Output(0 /*BT656_A_OUT_DEC_I*/, 0, 0); //BK141216
 #endif
 
 	//DTV BT656Dec Freerun & clock
 	BT656DecSetFreerun(OFF);
-	switch(InputMain) {
+	switch (InputMain)
+	{
 	case INPUT_CVBS:
 	case INPUT_SVIDEO:
 	case INPUT_COMP:
@@ -780,7 +791,8 @@ void InitInputAsDefault(void)
 	}
 
 	//DTV
-	switch(InputMain) {
+	switch (InputMain)
+	{
 	case INPUT_CVBS:
 	case INPUT_SVIDEO:
 	case INPUT_COMP:
@@ -790,19 +802,20 @@ void InitInputAsDefault(void)
 	case INPUT_DVI:
 		DtvSetDelay(1/*clock*/,4/*vSync*/);
 
-		DtvSetFieldDetectionRegion(ON,0x11);	// set Det field by WIN
-		DtvSetSyncPolarity(0,0);
-		DtvSetRouteFormat(DTV_ROUTE_YPbPr,DTV_FORMAT_RGB565);
+		DtvSetFieldDetectionRegion(ON, 0x11);	// set Det field by WIN
+		DtvSetSyncPolarity(0, 0);
+		DtvSetRouteFormat(DTV_ROUTE_YPbPr, DTV_FORMAT_RGB565);
 		break;
 #endif
 	case INPUT_HDMIPC:
 	case INPUT_HDMITV:
 #if defined(SUPPORT_HDMI)
 #ifdef SUPPORT_HDMI_24BIT
-		DtvSetRouteFormat(DTV_ROUTE_BGR,DTV_FORMAT_RGB); //RGB24.
+		DtvSetRouteFormat(DTV_ROUTE_BGR, DTV_FORMAT_RGB); //RGB24.
 #else
-		DtvSetRouteFormat(DTV_ROUTE_565_MSB_B_LSB_R_REVERSED,DTV_FORMAT_RGB565);
+		DtvSetRouteFormat(DTV_ROUTE_565_MSB_B_LSB_R_REVERSED, DTV_FORMAT_RGB565);
 #endif
+
 		//BK121213. TW8836 EVB10 has reversed ORDER..
 		DtvSetReverseBusOrder(1);
 
@@ -815,14 +828,14 @@ void InitInputAsDefault(void)
 	case INPUT_LVDS:
 #if defined(SUPPORT_LVDSRX)
 		/* LVDS-Rx chip (SN65LVDS93A) uses 24 input pins */
-		DtvSetRouteFormat(DTV_ROUTE_BGR,DTV_FORMAT_RGB); //RGB24.
+		DtvSetRouteFormat(DTV_ROUTE_BGR, DTV_FORMAT_RGB); //RGB24.
 
 		//BK121213. TW8836 EVB10 has reversed ORDER..
 		DtvSetReverseBusOrder(1);
 
-		DtvSetDelay(1/*clock*/,4/*vSync*/);		 
+		DtvSetDelay(1/*clock*/, 4/*vSync*/);		 
 
-		DtvSetFieldDetectionRegion(ON,0x11);	// set Det field by WIN
+		DtvSetFieldDetectionRegion(ON, 0x11);	// set Det field by WIN
 #endif	//..SUPPORT_LVDSRX
 		break;
 
@@ -832,11 +845,11 @@ void InitInputAsDefault(void)
 		DtvSetReverseBusOrder(1);
 #endif
 		break;
-
 	}
 
 	//LVDSRx
-	switch(InputMain) {
+	switch (InputMain)
+	{
 	case INPUT_CVBS:
 	case INPUT_SVIDEO:
 	case INPUT_COMP:
@@ -848,6 +861,7 @@ void InitInputAsDefault(void)
 		LvdsRxEnable(OFF);
 		LvdsRxPowerDown(ON);
 		break;
+	
 	case INPUT_LVDS:
 		EnableExtLvdsTxChip(ON);	//GPIO EXPANDER IO[4]
 		InitLvdsRx();
@@ -855,16 +869,16 @@ void InitInputAsDefault(void)
 	}
 
 	//scaler
-	ScalerSetFreerunAutoManual(ON,ON);
+	ScalerSetFreerunAutoManual(ON, ON);
 	ScalerWriteFreerunTotal(FREERUN_DEFAULT_HTOTAL, FREERUN_DEFAULT_VTOTAL);
 
-
 	//measure
-	MeasSetWindow( 0, 0, 0xfff, 0xfff );//set dummy window. 1600x600
-	WriteTW88(REG508, 0x08 );			// field:Both. Note:DO not turn on the start
-	WriteTW88(REG50B, 0x40 );			// Threshold active detection 
+	MeasSetWindow(0, 0, 0xfff, 0xfff);//set dummy window. 1600x600
+	WriteTW88(REG508, 0x08);			// field:Both. Note:DO not turn on the start
+	WriteTW88(REG50B, 0x40);			// Threshold active detection 
 
-	switch(InputMain) {
+	switch (InputMain)
+	{
 	case INPUT_CVBS:
 	case INPUT_SVIDEO:
 	case INPUT_COMP:
@@ -888,9 +902,7 @@ void InitInputAsDefault(void)
 	//---------------------------
 	//BT656 Output
 	//---------------------------
-
 }
-
 
 //-----------------------------------------------------------------------------
 /**

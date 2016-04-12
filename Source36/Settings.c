@@ -1339,30 +1339,36 @@ BYTE UpdateGpioExpanderPin(BYTE pin, BYTE dir, BYTE value)
 	mask = 1;
 	mask <<= pin;
 
-	if(dir==SX1504_DIR_IN) {
+	if (dir == SX1504_DIR_IN)
+	{
 		//read..
 		bRegDir  = ReadI2CByte(I2CID_SX1504, SX1504_DIR_REG);
 		bRegDir |= mask;
-		WriteI2CByte( I2CID_SX1504, SX1504_DIR_REG, bRegDir);
+		WriteI2CByte(I2CID_SX1504, SX1504_DIR_REG, bRegDir);
 
 		bRegData = ReadI2CByte(I2CID_SX1504, SX1504_DATA_REG);
+
 		return bRegData & mask ? 1 : 0;
 	}
-	else {
+	else
+	{
 		//write..
 		bRegData = ReadI2CByte(I2CID_SX1504, SX1504_DATA_REG);
 		bRegDir  = ReadI2CByte(I2CID_SX1504, SX1504_DIR_REG);
 		bRegDir &= ~mask;
-		if(value)	bRegData |= mask;
-		else		bRegData &= ~mask;
-		WriteI2CByte( I2CID_SX1504, SX1504_DIR_REG, bRegDir);	//write direction first,
-		WriteI2CByte( I2CID_SX1504, SX1504_DATA_REG, bRegData);	//and then write data.
+
+		if (value)
+			bRegData |= mask;
+		else
+			bRegData &= ~mask;
+
+		WriteI2CByte(I2CID_SX1504, SX1504_DIR_REG, bRegDir);	//write direction first,
+		WriteI2CByte(I2CID_SX1504, SX1504_DATA_REG, bRegData);	//and then write data.
+		
 		return 0;
 	}
 }
 #endif
-
-
 
 //GPIO43 or expender GPIO[1]
 //-----------------------------------------------------------------------------
@@ -1382,7 +1388,6 @@ void FP_BiasOnOff(BYTE fOn)
 #endif
 }
 
-
 //FrontPanel PowerControl ON - GPIO42. or expender GPIO[0]
 //-----------------------------------------------------------------------------
 /**
@@ -1399,9 +1404,11 @@ void FP_PWC_OnOff(BYTE fOn)
 	WriteTW88(REG008,  temp); 
 	return;
 #endif
-	Printf("\n\rFP_PWC %s",fOn ? "On" : "Off");
+	
+	Printf("\n\rFP_PWC %s", fOn ? "On" : "Off");
+
 #if defined(SUPPORT_I2C_MASTER)
-	UpdateGpioExpanderPin(SX1504_PIN1_FP_PWC,SX1504_DIR_OUT,fOn ? 0:1);
+	UpdateGpioExpanderPin(SX1504_PIN1_FP_PWC, SX1504_DIR_OUT, fOn ? 0 : 1);
 #endif
 }
 
@@ -1424,26 +1431,28 @@ void InitGpioDefault(void)
 #endif
 }
 
-
 //Enable SN65LVDS93A by GPIO Expander IO[4].
 void EnableExtLvdsTxChip(BYTE fOn)
 {
 #ifdef MODEL_TW8836DEMO
-	Printf("\n\rExtLvdsTx %s",fOn ? "On" : "Off");
+	Printf("\n\rExtLvdsTx %s", fOn ? "On" : "Off");
+
 	//P1_5 = fOn;
-	if(fOn) WriteTW88(REG094, ReadTW88(REG094) |  0x02);
-	else	WriteTW88(REG094, ReadTW88(REG094) & ~0x02);
+	if (fOn)
+		WriteTW88(REG094, ReadTW88(REG094) |  0x02);
+	else
+		WriteTW88(REG094, ReadTW88(REG094) & ~0x02);
+	
 	return;
 #endif
 
-	if(fOn)
-		Printf("\n\rExtLvdsTx %s",fOn ? "On" : "Off");
+	if (fOn)
+		Printf("\n\rExtLvdsTx %s", fOn ? "On" : "Off");
+
 #if defined(SUPPORT_I2C_MASTER)
-	UpdateGpioExpanderPin(SX1504_PIN4_LVDSTX,SX1504_DIR_OUT,fOn ? 1:0);
+	UpdateGpioExpanderPin(SX1504_PIN4_LVDSTX, SX1504_DIR_OUT, fOn ? 1 : 0);
 #endif
 }
-
-
 
 //yes, it is gone on TW8836...but, FW miss it.
 //==============================================================================
