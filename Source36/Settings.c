@@ -994,7 +994,7 @@ void SpiClk_SetAsync(BYTE mcu_div, BYTE wait, BYTE fSpiOSD, BYTE fMcuFetch)
 	BYTE bTemp;
 
 	r4e1 = ReadTW88(REG4E1);	
-	if (r4e1 & 0x20)									//I don't care 32K and unknown
+	if (r4e1 & 0x20)								//I don't care 32K and unknown
 		WriteTW88(REG4E1, r4e1 & ~0x30);			//select 27MHz first.
 
 	WriteTW88(REG4F2, ReadTW88(REG4F2) | 0x80);		//on ASYNC

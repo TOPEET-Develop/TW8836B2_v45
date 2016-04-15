@@ -790,11 +790,12 @@ void InitClockAsDefault(BYTE mode)
 		spiflash_chip->sspll_0f8,
 		spiflash_chip->sspll_0f9,
 		spiflash_chip->sspll_0fa);
+	
 	/*set sspll1 for spi & mcu clock*/
-	WriteTW88(REG0F8,spiflash_chip->sspll_0f8);
-	WriteTW88(REG0F9,spiflash_chip->sspll_0f9);
-	WriteTW88(REG0FA,spiflash_chip->sspll_0fa);
-	WriteTW88(REG0FD,spiflash_chip->sspll_0fd);
+	WriteTW88(REG0F8, spiflash_chip->sspll_0f8);
+	WriteTW88(REG0F9, spiflash_chip->sspll_0f9);
+	WriteTW88(REG0FA, spiflash_chip->sspll_0fa);
+	WriteTW88(REG0FD, spiflash_chip->sspll_0fd);
  	WriteTW88(REG0FC, ReadTW88(REG0FC) & ~0x80); //SSPLL1 Power up
 
 	/*sspll2 for pclk & pclko*/
@@ -825,7 +826,7 @@ void InitClockAsDefault(BYTE mode)
 	if (spiflash_chip->mcuclk_d)
 	{
         /* ASYNC ? */
-		SpiClk_SetAsync(spiflash_chip->mcuclk_d,async_wait_value[spiflash_chip->mcuclk_d], ON,ON);
+		SpiClk_SetAsync(spiflash_chip->mcuclk_d, async_wait_value[spiflash_chip->mcuclk_d], ON, ON);
 		dTemp = spiflash_chip->typical_speed;
 		mcu_clk = McuClkGetFreq(dTemp);
 
