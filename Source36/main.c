@@ -769,7 +769,6 @@ void CheckGpioExpender(BYTE fPowerUpBoot)
 * @param mode
 *	0:SYNC 1:ASYNC
 */
-
 void InitClockAsDefault(BYTE mode)
 {
 	DWORD mcu_clk;
@@ -778,11 +777,12 @@ void InitClockAsDefault(BYTE mode)
 
 	//start from safe 27MHz.
     //start from HW default value.
-	WriteTW88(REG4E1,0x06); 
+	WriteTW88(REG4E1, 0x06); 
 
-	if(spiflash_chip == NULL)
+	if (spiflash_chip == NULL)
 		return;
-	if(spiflash_chip->mid == 0)
+	
+	if (spiflash_chip->mid == 0)
 		return;
 
 	Puts("\nInitClockAsDefault");
@@ -803,14 +803,15 @@ void InitClockAsDefault(BYTE mode)
 	Sspll2SetFreqReg(SSPLL_108M_REG);
 
  	WriteTW88(REG0EC, ReadTW88(REG0EC) & ~0x80);	//SSPLL2 Power up			
-	WriteTW88(REG0ED,0x23); //POST=2(div1),VCO=54~108,ChargePump:3
+	WriteTW88(REG0ED, 0x23); //POST=2(div1),VCO=54~108,ChargePump:3
 #else
 	ePuts("SSPLL2 72M/1/2");	
 	Sspll2SetFreqReg(SSPLL_72M_REG);
 		
  	WriteTW88(REG0EC, ReadTW88(REG0EC) & ~0x80);	//SSPLL2 Power up			
-	WriteTW88(REG0ED,0x24); //POST=0,VCO=54~108,ChargePump:4
+	WriteTW88(REG0ED, 0x24); //POST=0,VCO=54~108,ChargePump:4
 #endif
+
 	//Errata150407
 	//BK150409 restore Errara150407
 	WriteTW88(REG0F6, 0x00);
@@ -821,7 +822,8 @@ void InitClockAsDefault(BYTE mode)
 	PllClkSetSource(spiflash_chip->pllclk_s);
 	PllClkSetDividerReg(spiflash_chip->pllclk_d);
 
-	if(spiflash_chip->mcuclk_d) {
+	if (spiflash_chip->mcuclk_d)
+	{
         /* ASYNC ? */
 		SpiClk_SetAsync(spiflash_chip->mcuclk_d,async_wait_value[spiflash_chip->mcuclk_d], ON,ON);
 		dTemp = spiflash_chip->typical_speed;
@@ -830,11 +832,13 @@ void InitClockAsDefault(BYTE mode)
 		I2C_delay_base = (mcu_clk -1) / 27;
 		I2C_delay_base++;
 	}
-	else {
+	else
+	{
 		SpiClk_SetSync();
 		I2C_delay_base = (spiflash_chip->typical_speed -1) / 27;
 		I2C_delay_base++;
 	}
+
 	DumpClock();
 }
 

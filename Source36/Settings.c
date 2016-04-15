@@ -648,15 +648,23 @@ void PclkoPrintDiv(BYTE div)
 void PllClkSetSource(BYTE fPLL108)
 {
 	BYTE bTemp;
+
 	bTemp = ReadTW88(REG4E0);
-	if(fPLL108) bTemp |= 0x01;
-	else        bTemp &= ~0x01;
+
+	if (fPLL108)
+		bTemp |= 0x01;
+	else
+		bTemp &= ~0x01;
+
 	WriteTW88(REG4E0, bTemp);
 }
+
 BYTE PllClkGetSource(void)
 {
 	BYTE bTemp;
+
 	bTemp = ReadTW88(REG4E0);
+
 	return (bTemp & 0x01);
 }
 
@@ -723,13 +731,16 @@ DWORD PllClkGetFreq(void)
 
 	//check PLLCLK_Sel.
 	temp8 = PllClkGetSource();
-	if(temp8)	clkpll = 108000000L;		//comes from PLL108M.
-	else		clkpll = Sspll1GetFreq();	// comes from SSPLL1
+	if (temp8)
+		clkpll = 108000000L;		//comes from PLL108M.
+	else
+		clkpll = Sspll1GetFreq();	// comes from SSPLL1
 		
 	//read divider and calculate PLLCLK.
 	temp8 = ReadTW88(REG4E1) & 0x0F;
 
-	switch(temp8) {
+	switch (temp8)
+	{
 	case 0:	temp32 = clkpll;		break;
 	case 1:	temp32 = clkpll*2/3;	break; //1.5
 	case 2:	temp32 = clkpll >> 1;	break; //2
@@ -742,9 +753,9 @@ DWORD PllClkGetFreq(void)
 	case 9:	temp32 = clkpll >> 4;	break; //16
 	default:temp32 = clkpll >> 5;	break; //32
 	}
+
 	return temp32;
 }
-
 
 //=============================================================================
 // MCUSPI
@@ -837,22 +848,24 @@ void SpiClkRecover27MSource(void)
 
     //Clock
 	temp = ReadTW88(REG4E1);
-	if(temp & 0x30) {
+	if (temp & 0x30)
+	{
 		Puts(" 27MHz");
 		WriteTW88(REG4E1, temp & ~0x30);
 	}
 
     //SPI Read Mode
 	temp = ReadTW88(REG4C0);
-	if(temp & 0x07) {
+	if (temp & 0x07)
+	{
         Puts(" Slow");
 		WriteTW88(REG4C0, temp & 0xF8);
-		SPICMD_x_READ	= 0x03;	
-		SPICMD_x_BYTES	= 4;	//(8+24)/8
+		SPICMD_x_READ  = 0x03;	
+		SPICMD_x_BYTES = 4;	//(8+24)/8
 	}
+
 	I2C_delay_base = 1;
 }
-
 
 //-----------------------------------------------------------------------------
 /**
@@ -894,14 +907,17 @@ DWORD SpiClkGetFreq(void)
 	temp8 = ReadTW88(REG4E1) >> 4;
 	temp8 &= 0x03;
 
-	switch(temp8) {
+	switch (temp8)
+	{
 	case 0:  temp32 = 27000000L;		break;
 	case 1:	 temp32 = 32000L;			break;
 	case 2:	 temp32 = PllClkGetFreq();	break;
 	default: temp32 = 27000000L;		break;	//unknown. bug.
 	}
+
 	return temp32;
 }
+
 /**
 * Get MCU clock from SpiClk
 * @param spiclk
@@ -912,7 +928,8 @@ DWORD McuClkGetFreq(DWORD spiclk)
 	DWORD temp32;
 
 	temp = ReadTW88(REG4F0) >> 4;
-	switch(temp) {
+	switch (temp)
+	{
 	case 0:	temp32 = spiclk;		break;
 	case 1: temp32 = spiclk *2/3;	break;
 	case 2: temp32 = spiclk / 2;	break;
@@ -922,9 +939,9 @@ DWORD McuClkGetFreq(DWORD spiclk)
 	case 6: temp32 = spiclk / 4;	break;
 	case 7: temp32 = spiclk / 5;	break;
 	}
+	
 	return temp32;
 }
-
 
 //=============================================================================
 // SPI CLK
@@ -953,9 +970,10 @@ void SpiClk_SetSync(void)
 	BYTE r4e1;
 
 //Puts("\n SpiClk_SetSync");
-	r4e1=ReadTW88(REG4E1);	
-	if(r4e1 & 0x20)				  					//I don't care 32K and unknown
+	r4e1 = ReadTW88(REG4E1);	
+	if (r4e1 & 0x20)				  					//I don't care 32K and unknown
 		WriteTW88(REG4E1, r4e1 & ~0x30);			//select 27MHz first.
+	
 	WriteTW88(REG4F2, ReadTW88(REG4F2) & ~0x80);	//off ASYNC
 	WriteTW88(REG4F0, ReadTW88(REG4F0) & 0x0F);		//set MCU divider as 1.
 
@@ -963,6 +981,7 @@ void SpiClk_SetSync(void)
 	// make effect.
 	WriteTW88(REG4E1, r4e1 | 0x20);					//select PLLCLK.  
 }
+
 /**
 * example
 *	#define MCU_DIV_2		2
@@ -974,19 +993,23 @@ void SpiClk_SetAsync(BYTE mcu_div, BYTE wait, BYTE fSpiOSD, BYTE fMcuFetch)
 	BYTE r4e1;
 	BYTE bTemp;
 
-	r4e1=ReadTW88(REG4E1);	
-	if(r4e1 & 0x20)									//I don't care 32K and unknown
+	r4e1 = ReadTW88(REG4E1);	
+	if (r4e1 & 0x20)									//I don't care 32K and unknown
 		WriteTW88(REG4E1, r4e1 & ~0x30);			//select 27MHz first.
 
 	WriteTW88(REG4F2, ReadTW88(REG4F2) | 0x80);		//on ASYNC
+
 	bTemp = ReadTW88(REG4E0) & 0x01;
 	WriteTW88(REG4E0, bTemp | (wait <<1));			//set wait value
+
 	bTemp = ReadTW88(REG4DF) & ~0x08;
-	if(fSpiOSD)
+	if (fSpiOSD)
 		WriteTW88(REG4DF, bTemp | 0x08);			//set SPIOSD_WAIT_OFF
+	
 	bTemp = ReadTW88(REG4F0) & ~0x08;
-	if(fMcuFetch)
+	if (fMcuFetch)
 		WriteTW88(REG4F0, bTemp | 0x08);			//set MCUFETCH_WAIT_OFF	
+	
 	bTemp = ReadTW88(REG4F0) & 0x0F;
 	WriteTW88(REG4F0, bTemp | (mcu_div << 4));		//set MCU divider
 
@@ -994,10 +1017,13 @@ void SpiClk_SetAsync(BYTE mcu_div, BYTE wait, BYTE fSpiOSD, BYTE fMcuFetch)
 	// make effect.
 	WriteTW88(REG4E1, r4e1 | 0x20);					//select PLLCLK.  
 }
+
 BYTE SpiClk_GetMinAsyncWaitValue(BYTE mcu_div)
 {
 	BYTE ret;
-	switch(mcu_div) {
+	
+	switch (mcu_div)
+	{
 	case 0:	ret = 1;	break;	//div1
 	case 1: ret = 2;	break;	//div1.5
 	case 2: ret = 3;	break;	//div2
@@ -1007,6 +1033,7 @@ BYTE SpiClk_GetMinAsyncWaitValue(BYTE mcu_div)
 	case 6: ret = 9;	break;	//div4
 	default: ret = 9;	break;
 	}
+
 	return ret;
 }
 
@@ -1090,30 +1117,29 @@ BYTE SpiClk_overclocking(BYTE fOn)
 	BYTE r4e1;
 	BYTE bTemp;
 
-	if(spiflash_chip->mid != SPIFLASH_MID_MX)
+	if (spiflash_chip->mid != SPIFLASH_MID_MX)
 		return 1; //0xFF;	//incorrect spiflash vendor
 
-
 	bTemp = ReadTW88(REG4F2);
-	if(bTemp & 0x80)
+	if (bTemp & 0x80)
 		return 2; //0xFE;	//async can not support
 
 	spiclk = SpiClkGetFreq();
-	if(spiclk < 72000000)
+	if (spiclk < 72000000)
 		return 3; //0xFD;	//to slow
 
 	spiclk = SpiClkGetFreq();
-	if(spiclk > 108000000)
+	if (spiclk > 108000000)
 		return 4; //0xFC;	//to high
 
 	r4e1 = ReadTW88(REG4E1);
-	if(fOn) WriteTW88(REG4E1, r4e1 |  0xC0);
-	else	WriteTW88(REG4E1, r4e1 & ~0xC0);
+	if (fOn)
+		WriteTW88(REG4E1, r4e1 |  0xC0);
+	else
+		WriteTW88(REG4E1, r4e1 & ~0xC0);
 			
 	return 0; //success	
 }
-
-
 
 //=============================================================================
 // LLPLL
@@ -1127,10 +1153,11 @@ BYTE SpiClk_overclocking(BYTE fOn)
 */
 void aRGBSetClockSource(BYTE use_27M)
 {
-	if(use_27M)	WriteTW88(REG1C0, ReadTW88(REG1C0) | 0x01); 
-	else		WriteTW88(REG1C0, ReadTW88(REG1C0) & ~0x01);
+	if (use_27M)
+		WriteTW88(REG1C0, ReadTW88(REG1C0) | 0x01); 
+	else
+		WriteTW88(REG1C0, ReadTW88(REG1C0) & ~0x01);
 }
-
 
 //-----------------------------------------------------------------------------
 /**
@@ -1139,19 +1166,20 @@ void aRGBSetClockSource(BYTE use_27M)
 void DumpClock(void)
 {
 	DWORD sspll;
-	DWORD pll_clk,spi_clk, mcu_clk;
-	DWORD pclk,pclko;
+	DWORD pll_clk, spi_clk, mcu_clk;
+	DWORD pclk, pclko;
 
 	sspll  = Sspll1GetFreq();
 	pll_clk = PllClkGetFreq();
 	spi_clk = SpiClkGetFreq();
 	mcu_clk = McuClkGetFreq(spi_clk);
+	
     sspll += 500000;        sspll /= 1000000;
     pll_clk += 500000;      pll_clk /= 1000000;
     spi_clk += 500000;      spi_clk /= 1000000;
     mcu_clk += 500000;      mcu_clk /= 1000000;
-	Printf("\n\rCLOCK SSPLL1:%ldM PLLCLK:%ldM SPI:%ldM MCU:%ldM I2C:%bd",
-        sspll,pll_clk, spi_clk, mcu_clk, I2C_delay_base);
+
+	Printf("\n\rCLOCK SSPLL1:%ldM PLLCLK:%ldM SPI:%ldM MCU:%ldM I2C:%bd", sspll, pll_clk, spi_clk, mcu_clk, I2C_delay_base);
 
 	sspll = Sspll2GetFreq();
 	pclk   = PclkGetFreq(sspll);
@@ -1159,11 +1187,14 @@ void DumpClock(void)
     sspll += 500000;        sspll /= 1000000;
     pclk += 500000;      pclk /= 1000000;
     pclko += 500000;      pclko /= 1000000;
+	
 	Printf("\n\r      SSPLL2:%ldM PCLK:%ldM PCLKO:%ldM", sspll, pclk, pclko);
-	if(ReadTW88(REG20D) & 0x10) Puts(" Pol:1");
-	else                        Puts(" Pol:0");
-}
 
+	if (ReadTW88(REG20D) & 0x10)
+		Puts(" Pol:1");
+	else
+		Puts(" Pol:0");
+}
 
 //=============================================================================
 // InMux (Input Mux)
@@ -1377,14 +1408,15 @@ BYTE UpdateGpioExpanderPin(BYTE pin, BYTE dir, BYTE value)
 */
 void FP_BiasOnOff(BYTE fOn)
 {
-	Printf("\n\rFP_Bias %s",fOn ? "On" : "Off");
+	Printf("\n\rFP_Bias %s", fOn ? "On" : "Off");
+
 #ifdef MODEL_TW8836DEMO
 	Puts("  -->skip");
 	return;
 #endif
 
 #if defined(SUPPORT_I2C_MASTER)
-	UpdateGpioExpanderPin(SX1504_PIN0_FP_BIAS,SX1504_DIR_OUT,fOn ? 0:1);
+	UpdateGpioExpanderPin(SX1504_PIN0_FP_BIAS, SX1504_DIR_OUT, fOn ? 0 : 1);
 #endif
 }
 

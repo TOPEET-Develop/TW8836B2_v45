@@ -1424,28 +1424,30 @@ static void Init8836Register(REG_IDX_DATA_t *pTbl, BYTE fCheck)
 //}
 void Init8836AsDefault(BYTE _InputMain, BYTE _fPowerOn)
 {
-	if(_fPowerOn) {
+	if (_fPowerOn)
+	{
 		//If power on, download HW default & SW default.
 		Puts("\n\rInit8836AsDefault");
 		Init8836Register(InitHwDefault_Table, 0);
 		Init8836Register(InitSwDefault_Table, 0);
+
 		return;
 	}
 	
 	//--- recover
 	Puts("\n\rRecover8836AsDefault(");
-	PrintfInput(_InputMain,0);
+	PrintfInput(_InputMain, 0);
 	Puts(")");
 
 	//mute scler output.
-	WriteTW88(REG21E,0x03);		
+	WriteTW88(REG21E, 0x03);		
  
 	//Recover only the selected input.
-	if(_InputMain == INPUT_CVBS 
+	if (_InputMain == INPUT_CVBS 
 	|| _InputMain == INPUT_SVIDEO 
 	|| _InputMain == INPUT_BT656)
 		Init8836Register(Recover_Decoder, 0);
-	else if(_InputMain == INPUT_COMP 
+	else if (_InputMain == INPUT_COMP 
 	     || _InputMain == INPUT_PC)
 		Init8836Register(Recover_aRGB, 0);
 	//else
@@ -1466,11 +1468,9 @@ void Init8836AsDefault(BYTE _InputMain, BYTE _fPowerOn)
 //	if(spiflash_chip->mid == SPIFLASH_MID_EON)
 //		Sspll1SetFreqReg(SSPLL_105M_REG);
 //	else
-//		Sspll1SetFreqReg(SSPLL_108M_REG);
-						
+//		Sspll1SetFreqReg(SSPLL_108M_REG);						
 #endif			
 }
-
 
 /*
 *	BT656 External Encoder table.
