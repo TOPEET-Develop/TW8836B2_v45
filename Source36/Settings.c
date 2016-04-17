@@ -315,7 +315,6 @@ static DWORD Sspll2ConvertFPLL2Freq(DWORD fpll)
 	return SspllFPLL2FREQ(fpll, post);
 }
 
-
 //-----------------------------------------------------------------------------
 /**
 * set SSPLL freq and Pll
@@ -327,26 +326,50 @@ static DWORD Sspll2ConvertFPLL2Freq(DWORD fpll)
 */
 void Sspll1SetFreq(DWORD freq, BYTE fControl)
 {
-	BYTE   freq1m; 
-	BYTE   curr, vco, post;
-	DWORD  fpll;
+	BYTE freq1m; 
+	BYTE curr, vco, post;
+	DWORD fpll;
 	
 	//dPrintf("\n\rSspll1SetFreq(%ld,%bd)",freq,fControl);
 	freq1m = freq/1000000L;		//base:1MHz
-	if(freq1m > 150)
+	if (freq1m > 150)
 		Puts("\nERROR:Max SSPLL speed is 150MHz");
-	if(fControl==0) {
-		fpll=Sspll1ConvertFreq2FPLL(freq);	
+	
+	if (fControl == 0)
+	{
+		fpll = Sspll1ConvertFreq2FPLL(freq);	
 		Sspll1SetFreqReg(fpll);
+		
 		return;
 	}
 
 	//----- Frequency Range --------------------
-	if     ( freq1m < 27 )  { vco=2; curr=0; post=2; }		// step = 0.5MHz
-	else if( freq1m < 54 )  { vco=2; curr=1; post=1; }		// step = 1.0MHz
-	else if( freq1m < 108 ) { vco=2; curr=2; post=0; }		// step = 1.0MHz
-	else                    { vco=3; curr=3; post=0; }		// step = 1.0MHz
-	curr = vco+1;	//BK110721. Harry Suggest.
+	if (freq1m < 27)
+	{
+		vco = 2;
+		curr = 0;
+		post = 2;
+	}		// step = 0.5MHz
+	else if (freq1m < 54)
+	{
+		vco = 2;
+		curr = 1;
+		post = 1;
+	}		// step = 1.0MHz
+	else if (freq1m < 108)
+	{
+		vco = 2;
+		curr = 2;
+		post = 0;
+	}		// step = 1.0MHz
+	else
+	{
+		vco = 3;
+		curr = 3;
+		post = 0;
+	}		// step = 1.0MHz
+
+	curr = vco + 1;	//BK110721. Harry Suggest.
 
 	//----- Get pll register value from freq
 	fpll = SspllFREQ2FPLL(freq, post);
@@ -356,6 +379,7 @@ void Sspll1SetFreq(DWORD freq, BYTE fControl)
 	Sspll1SetAnalogControl((vco<<4) | (post<<6) | curr);
 	//dPrintf("\n\rPOST:%bx VCO:%bx CURR:%bx",post, vco, curr);
 }
+
 void Sspll2SetFreq(DWORD freq, BYTE fControl)
 {
 	BYTE	freq1m; 
