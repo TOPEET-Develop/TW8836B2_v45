@@ -762,9 +762,14 @@ DWORD PllClkGetFreq(void)
 	temp8 = PllClkGetSource();
 	if (temp8)
 		clkpll = 108000000L;		//comes from PLL108M.
-	else
-		clkpll = Sspll1GetFreq();	// comes from SSPLL1
-		
+	else 
+	{
+		if (ReadTW88(REG04B) & 0x20)	// REG04B BIT5 = 1, SPI CLK select SSPLL2
+			clkpll = Sspll2GetFreq();	// comes from SSPLL2
+		else	
+			clkpll = Sspll1GetFreq();	// comes from SSPLL1
+	}
+	
 	//read divider and calculate PLLCLK.
 	temp8 = ReadTW88(REG4E1) & 0x0F;
 
