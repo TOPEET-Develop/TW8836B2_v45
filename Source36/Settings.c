@@ -152,7 +152,6 @@ void Sspll2SetFreqReg(DWORD fpll)
 	WriteTW88(REG0E8, (BYTE)(fpll>>16));
 }
 
-
 static DWORD Sspll1GetFreqReg(void)
 {
 	DWORD dFPLL;
@@ -165,6 +164,7 @@ static DWORD Sspll1GetFreqReg(void)
 
 	return dFPLL;
 }
+
 static DWORD Sspll2GetFreqReg(void)
 {
 	DWORD dFPLL;
@@ -177,7 +177,6 @@ static DWORD Sspll2GetFreqReg(void)
 
 	return dFPLL;
 }
-
 
 //-----------------------------------------------------------------------------
 /**
@@ -305,13 +304,18 @@ static DWORD SspllFPLL2FREQ(DWORD fpll, BYTE post)
 static DWORD Sspll1ConvertFPLL2Freq(DWORD fpll)
 {
 	BYTE post;
+
 	post = Sspll1GetPost();
+
 	return SspllFPLL2FREQ(fpll, post);
 }
+
 static DWORD Sspll2ConvertFPLL2Freq(DWORD fpll)
 {
 	BYTE post;
+
 	post = Sspll2GetPost();
+
 	return SspllFPLL2FREQ(fpll, post);
 }
 
@@ -445,6 +449,7 @@ DWORD Sspll1GetFreq(void)
 
 	return freq;
 }
+
 DWORD Sspll2GetFreq(void)
 {
 	DWORD freq, fpll;
