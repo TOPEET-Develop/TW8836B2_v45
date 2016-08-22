@@ -863,8 +863,11 @@ code struct SPIFLASH_DIMEMSION spiflash_chip_table[] =
  tCS CE# Setup Time 6nS
  tCH CE# Hold Time 6nS
 */
-	{ 0x9D,0x60,0x18,	128,	SPI_READ_QUADIO,    104,SSPLL1_104M_REGS,   0,0,0,0,	"IC25LP128"},
-//  { 0x9D,0x60,0x18,	128,	SPI_READ_QUAD,      133,SSPLL1_104M_REGS,   0,0,0,0,	"IC25LP128"}, /*NG*/
+	{ 0x9D,0x60,0x18,	128,	SPI_READ_QUADIO,    104,SSPLL1_104M_REGS,   0,0,0,0,	"IS25LP128"},
+//  { 0x9D,0x60,0x18,	128,	SPI_READ_QUAD,      133,SSPLL1_104M_REGS,   0,0,0,0,	"IS25LP128"}, /*NG*/
+
+	{ 0x9D,0x60,0x19,	256,	SPI_READ_QUADIO,	104,SSPLL1_104M_REGS,	0,0,0,0,	"IS25LP256D"},
+
 //
 	/* last item need this for unknown SpiFlash */
 	{ 0x00,0x00,0x00,}
